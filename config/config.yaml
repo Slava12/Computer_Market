@@ -1,0 +1,12 @@
+http:
+    port: 8080
+database:
+    driver: postgres
+    user: postgres
+    password: Vbhfrk_)!
+    dbname: market
+    host: localhost
+    port: 5432
+    sslmode: disable
+logs:
+    folder: ./Logs/logs.txt
