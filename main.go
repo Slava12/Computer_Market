@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/Slava12/Computer_Market/config"
+	"github.com/Slava12/Computer_Market/database"
 	"github.com/Slava12/Computer_Market/logger"
 )
 
@@ -16,5 +15,10 @@ func main() {
 	} else {
 		logger.Info("Файл конфигурации успешно загружен.")
 	}
-	fmt.Println(configFile)
+	errorDatabase := database.Connect(configFile)
+	if errorDatabase != nil {
+		logger.Fatal(errorDatabase, "Не удалось подключиться к базе данных!")
+	} else {
+		logger.Info("Подключение к базе данных прошло успешно.")
+	}
 }
