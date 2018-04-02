@@ -6,17 +6,20 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Config служит типом данных, полученных из файла конфигурации
 type Config struct {
-	Http     HttpInfo     `yaml:"http"`
-	Database DatabaseInfo `yaml:"database"`
-	Logs     LogsInfo     `yaml:"logs"`
+	HTTP     HTTP     `yaml:"http"`
+	Database Database `yaml:"database"`
+	Logs     Logs     `yaml:"logs"`
 }
 
-type HttpInfo struct {
+// HTTP содержит данные конфига, связанные с протоколом HTTP
+type HTTP struct {
 	Port string `yaml:"port"`
 }
 
-type DatabaseInfo struct {
+// Database содержит данные конфига, связанные с базой данных
+type Database struct {
 	Driver   string `yaml:"driver"`
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
@@ -26,10 +29,12 @@ type DatabaseInfo struct {
 	SSLmode  string `yaml:"sslmode"`
 }
 
-type LogsInfo struct {
+// Logs содержит данные конфига, связанные с логированием
+type Logs struct {
 	Folder string `yaml:"folder"`
 }
 
+// Parse обрабатывает файл конфигурации
 func Parse() (Config, error) {
 	config := Config{}
 
