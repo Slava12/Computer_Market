@@ -39,7 +39,7 @@ func Parse() (Config, error) {
 	config := Config{}
 
 	//configurationPath := flag.String("path", "", "Путь до файла конфигурации.")
-	configurationPath := "./config/config.yaml" // убрать при работе
+	configurationPath := "config.yaml" // убрать при работе
 	//flag.Parse()
 
 	bytesFile, errorReadFile := ioutil.ReadFile(configurationPath)

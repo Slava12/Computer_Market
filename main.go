@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/Slava12/Computer_Market/config"
 	"github.com/Slava12/Computer_Market/database"
+	"github.com/Slava12/Computer_Market/handlefunc"
 	"github.com/Slava12/Computer_Market/logger"
 )
 
@@ -23,7 +22,12 @@ func main() {
 	} else {
 		logger.Info("Подключение к базе данных прошло успешно.")
 	}
-	user := database.User{0, 0, "lol", "123", "", ""}
-	id, _ := database.NewUser(user.AccessLevel, user.Login, user.Password, user.Email, user.FullName)
-	fmt.Println(id)
+
+	handlefunc.InitHTTP(configFile)
+
+	//user := database.User{0, 0, "lol", "123", "", ""}
+	//_ = database.NewUser(user.AccessLevel, user.Login, user.Password, user.Email, user.FullName)
+	//_ = database.DelUser(3)
+	/*users, _ := database.GetAllUsers()
+	fmt.Println(users)*/
 }

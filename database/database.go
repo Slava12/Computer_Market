@@ -13,7 +13,7 @@ var db *sql.DB
 
 // Connect осуществляет подключение к базе данных
 func Connect(dbConfig config.Config) (err error) {
-	connStr := "user=postgres password=Vbhfrk_)! dbname=market host=localhost port=5432 sslmode=disable"
+	connStr := "user=" + dbConfig.Database.User + " password=" + dbConfig.Database.Password + " dbname=" + dbConfig.Database.DBname + " host=" + dbConfig.Database.Host + " port=" + dbConfig.Database.Port + " sslmode=" + dbConfig.Database.SSLmode
 	if db == nil {
 		db, err = sql.Open("postgres", connStr)
 		if err != nil {
