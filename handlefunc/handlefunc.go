@@ -17,25 +17,23 @@ func InitHTTP(configFile config.Config) {
 
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 
-	http.HandleFunc("/index", index)
+	//http.HandleFunc("/index", index)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/create_account", createAccount)
+	http.HandleFunc("/profile", profile)
 
 	port := configFile.HTTP.Port
 
 	http.ListenAndServe(":"+port, nil)
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	title := "Главная страница"
+func menu(w http.ResponseWriter, r *http.Request) {
 	isLogged := false
 	name := "Святослав"
 	data := struct {
-		Title    string
 		IsLogged bool
 		Name     string
 	}{
-		Title:    title,
 		IsLogged: isLogged,
 		Name:     name,
 	}
@@ -49,7 +47,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		index(w, r)
+		menu(w, r)
 		err := tpl.ExecuteTemplate(w, "login.html", nil)
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -59,8 +57,18 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 func createAccount(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		index(w, r)
+		menu(w, r)
 		err := tpl.ExecuteTemplate(w, "create_account.html", nil)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+	}
+}
+
+func profile(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		menu(w, r)
+		err := tpl.ExecuteTemplate(w, "profile.html", nil)
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}

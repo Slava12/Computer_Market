@@ -1,10 +1,11 @@
 <head>
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" type="text/css" href="../../assets/css/menu_style.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/profile_style.css">
 	<script src="../../assets/js/script.js"></script>
 </head>
 <body>
 	<div class="info">
+		<div class="header">Ваши данные</div>
 		<div class="elem">
 			<div>Имя</div>
 			<div>{{.FirstName}}</div>
@@ -17,4 +18,6 @@
 			<div>Email</div>
 			<div>{{.Email}}</div>
 		</div>
+		<input type="button" class="button" name="change" value="Изменить данные">
 	</div>
+	<div ></div>
