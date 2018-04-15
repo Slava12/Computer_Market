@@ -1,0 +1,34 @@
+<head>
+	<title>Добавление пользователя</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+<div class="form">
+	<form action="/add_user" method="post">
+		<div class=elem">
+			<div>Уровень доступа</div>
+			<textarea name="accessLevel"></textarea>
+		</div>
+		<div class=elem">
+			<div>Логин</div>
+			<textarea name="login"></textarea>
+		</div>
+		<div class=elem">
+			<div>Пароль</div>
+			<textarea name="password"></textarea>
+		</div>
+		<div class=elem">
+			<div>E-mail</div>
+			<textarea name="email"></textarea>
+		</div>
+		<div class=elem">
+			<div>Имя</div>
+			<textarea name="firstName"></textarea>
+		</div>
+		<div class=elem">
+			<div>Фамилия</div>
+			<textarea name="secondName"></textarea>
+		</div>
+		<div><input type="submit" class="button"></div>
+	</form>
+</div>
+<div><button class="button"><a href="/edit/users">Вернуться к списку пользователей</a></button></div>
