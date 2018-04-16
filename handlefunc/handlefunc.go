@@ -26,13 +26,22 @@ func InitHTTP(configFile config.Config) {
 	http.HandleFunc("/create_account", createAccount)
 	http.HandleFunc("/profile", profile)
 	http.HandleFunc("/edit", edit)
-	http.HandleFunc("/edit/users", editUsers)
+	http.HandleFunc("/edit/users", users)
 	http.HandleFunc("/update_user", updateUser)
 	http.HandleFunc("/add_user", addUser)
+
+	http.HandleFunc("/edit/features", features)
+	http.HandleFunc("/update_feature", updateFeature)
+	http.HandleFunc("/add_feature", addFeature)
 
 	usersPaths := createUsersPaths()
 	for i := 0; i < len(usersPaths); i++ {
 		http.HandleFunc(usersPaths[i], showUser)
+	}
+
+	featuresPaths := createFeaturesPaths()
+	for i := 0; i < len(featuresPaths); i++ {
+		http.HandleFunc(featuresPaths[i], showFeature)
 	}
 
 	port := configFile.HTTP.Port
@@ -102,16 +111,7 @@ func edit(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/*func menuEdit(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		err := tpl.ExecuteTemplate(w, "menu_edit.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
-	}
-}*/
-
-func editUsers(w http.ResponseWriter, r *http.Request) {
+func users(w http.ResponseWriter, r *http.Request) {
 	result, err := database.GetAllUsers()
 	if err != nil {
 		logger.Error(err, "Не удалось загрузить список пользователей!")
@@ -141,7 +141,7 @@ func editUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "records_users.html", data)
+		err := tpl.ExecuteTemplate(w, "users.html", data)
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
@@ -183,7 +183,6 @@ func showUser(w http.ResponseWriter, r *http.Request) {
 		Email       string
 		FirstName   string
 		SecondName  string
-		Link        string
 	}{
 		Title:       string(result.ID),
 		ID:          result.ID,
@@ -254,4 +253,119 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 		}
 		http.Redirect(w, r, "/edit/users", 302)
 	}
+}
+
+//---------------------------------Features--------------------------------------//
+func features(w http.ResponseWriter, r *http.Request) {
+	result, err := database.GetAllFeatures()
+	if err != nil {
+		logger.Error(err, "Не удалось загрузить список характеристик!")
+	} else {
+		logger.Info("Список характеристик получен успешно.")
+	}
+	type Data struct {
+		ID   int
+		Name string
+		Link string
+	}
+	data := make([]Data, len(result))
+	for i := 0; i < len(result); i++ {
+		data[i].ID = result[i].ID
+		data[i].Name = result[i].Name
+		data[i].Link = "/edit/features/" + strconv.Itoa(result[i].ID)
+	}
+	if r.Method == "GET" {
+		menu(w, r)
+		err := tpl.ExecuteTemplate(w, "features.html", data)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+	}
+}
+
+func showFeature(w http.ResponseWriter, r *http.Request) {
+	splitURL := strings.Split(r.URL.String(), "/")
+	featureID, errString := strconv.Atoi(splitURL[3])
+	if errString != nil {
+		logger.Error(errString, "Не удалось конвертировать строку в число!")
+	}
+	result, err := database.GetFeature(featureID)
+	if err != nil {
+		logger.Error(err, "Не удалось получить запись о характеристике!")
+	} else {
+		logger.Info("Данные о характеристике получены успешно.")
+	}
+	data := struct {
+		Title string
+		ID    int
+		Name  string
+	}{
+		Title: string(result.ID),
+		ID:    result.ID,
+		Name:  result.Name,
+	}
+	if r.Method == "GET" {
+		menu(w, r)
+		err := tpl.ExecuteTemplate(w, "feature.html", data)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+	}
+}
+
+func updateFeature(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		menu(w, r)
+		err := tpl.ExecuteTemplate(w, "add_feature.html", nil)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+	}
+	if r.Method == "POST" {
+		result := database.Feature{}
+		result.ID, _ = strconv.Atoi(r.FormValue("id"))
+		result.Name = r.FormValue("name")
+		err := database.UpdateFeature(result.ID, result.Name)
+		if err != nil {
+			logger.Error(err, "Не удалось обновить зхарактеристику!")
+		} else {
+			logger.Info("Характеристика " + r.FormValue("id") + " обновлена успешно.")
+		}
+		http.Redirect(w, r, "/edit/features", 302)
+	}
+}
+
+func addFeature(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		menu(w, r)
+		err := tpl.ExecuteTemplate(w, "add_feature.html", nil)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+	}
+	if r.Method == "POST" {
+		result := database.Feature{}
+		result.Name = r.FormValue("name")
+		err := database.NewFeature(result.Name)
+		if err != nil {
+			logger.Error(err, "Не удалось добавить новую!")
+		} else {
+			logger.Info("Добавление характеристики прошло успешно.")
+		}
+		http.Redirect(w, r, "/edit/features", 302)
+	}
+}
+
+func createFeaturesPaths() []string {
+	result, err := database.GetAllFeatures()
+	if err != nil {
+		logger.Error(err, "Не удалось загрузить список характеристик!")
+	} else {
+		logger.Info("Список характеристик получен успешно.")
+	}
+	featuresPaths := make([]string, len(result))
+	for i := 0; i < len(result); i++ {
+		featuresPaths[i] = "/edit/features/" + strconv.Itoa(result[i].ID)
+	}
+	return featuresPaths
 }

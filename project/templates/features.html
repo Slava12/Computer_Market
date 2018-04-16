@@ -1,0 +1,12 @@
+<head>
+	<title>Характеристики</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+{{range .}}
+<div class="records">
+	<div class="record">{{.ID}}</div>
+	<div class="record">{{.Name}}</div>
+	<button class="button"><a href={{.Link}}>Редактировать</a></button>
+</div>
+{{end}}
+<div><button class="button"><a href="/add_feature">Добавить характеристику</a></button></div>
