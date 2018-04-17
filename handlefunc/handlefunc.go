@@ -9,6 +9,7 @@ import (
 	"github.com/Slava12/Computer_Market/config"
 	"github.com/Slava12/Computer_Market/database"
 	"github.com/Slava12/Computer_Market/logger"
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -19,34 +20,29 @@ var (
 func InitHTTP(configFile config.Config) {
 	tpl = template.Must(template.ParseGlob("templates/*.html"))
 
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
+	r := mux.NewRouter()
+	r.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 
-	http.HandleFunc("/index", index)
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/create_account", createAccount)
-	http.HandleFunc("/profile", profile)
-	http.HandleFunc("/edit", edit)
-	http.HandleFunc("/edit/users", users)
-	http.HandleFunc("/update_user", updateUser)
-	http.HandleFunc("/add_user", addUser)
+	r.HandleFunc("/index", index)
+	r.HandleFunc("/login", login)
+	r.HandleFunc("/create_account", createAccount)
+	r.HandleFunc("/profile", profile)
 
-	http.HandleFunc("/edit/features", features)
-	http.HandleFunc("/update_feature", updateFeature)
-	http.HandleFunc("/add_feature", addFeature)
+	r.HandleFunc("/edit", edit)
 
-	usersPaths := createUsersPaths()
-	for i := 0; i < len(usersPaths); i++ {
-		http.HandleFunc(usersPaths[i], showUser)
-	}
+	r.HandleFunc("/edit/users", users)
+	r.HandleFunc("/update_user", updateUser)
+	r.HandleFunc("/add_user", addUser)
+	r.HandleFunc("/edit/users/{id}", showUser)
 
-	featuresPaths := createFeaturesPaths()
-	for i := 0; i < len(featuresPaths); i++ {
-		http.HandleFunc(featuresPaths[i], showFeature)
-	}
+	r.HandleFunc("/edit/features", features)
+	r.HandleFunc("/update_feature", updateFeature)
+	r.HandleFunc("/add_feature", addFeature)
+	r.HandleFunc("/edit/features/{id}", showFeature)
 
 	port := configFile.HTTP.Port
 
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+port, r)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -101,6 +97,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//-------------------------------------edit------------------------------------------//
 func edit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		menu(w, r)
@@ -111,6 +108,7 @@ func edit(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//-------------------------------------Users---------------------------------------------//
 func users(w http.ResponseWriter, r *http.Request) {
 	result, err := database.GetAllUsers()
 	if err != nil {
@@ -148,20 +146,6 @@ func users(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func createUsersPaths() []string {
-	result, err := database.GetAllUsers()
-	if err != nil {
-		logger.Error(err, "Не удалось загрузить список пользователей!")
-	} else {
-		logger.Info("Список пользователей получен успешно.")
-	}
-	usersPaths := make([]string, len(result))
-	for i := 0; i < len(result); i++ {
-		usersPaths[i] = "/edit/users/" + strconv.Itoa(result[i].ID)
-	}
-	return usersPaths
-}
-
 func showUser(w http.ResponseWriter, r *http.Request) {
 	splitURL := strings.Split(r.URL.String(), "/")
 	userID, errString := strconv.Atoi(splitURL[3])
@@ -175,7 +159,6 @@ func showUser(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Данные о пользователе получены успешно.")
 	}
 	data := struct {
-		Title       string
 		ID          int
 		AccessLevel int
 		Login       string
@@ -184,7 +167,6 @@ func showUser(w http.ResponseWriter, r *http.Request) {
 		FirstName   string
 		SecondName  string
 	}{
-		Title:       string(result.ID),
 		ID:          result.ID,
 		AccessLevel: result.AccessLevel,
 		Login:       result.Login,
@@ -203,13 +185,6 @@ func showUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "add_user.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
-	}
 	if r.Method == "POST" {
 		result := database.User{}
 		result.ID, _ = strconv.Atoi(r.FormValue("id"))
@@ -296,13 +271,11 @@ func showFeature(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Данные о характеристике получены успешно.")
 	}
 	data := struct {
-		Title string
-		ID    int
-		Name  string
+		ID   int
+		Name string
 	}{
-		Title: string(result.ID),
-		ID:    result.ID,
-		Name:  result.Name,
+		ID:   result.ID,
+		Name: result.Name,
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -314,13 +287,6 @@ func showFeature(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateFeature(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "add_feature.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
-	}
 	if r.Method == "POST" {
 		result := database.Feature{}
 		result.ID, _ = strconv.Atoi(r.FormValue("id"))
@@ -346,26 +312,8 @@ func addFeature(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		result := database.Feature{}
 		result.Name = r.FormValue("name")
-		err := database.NewFeature(result.Name)
-		if err != nil {
-			logger.Error(err, "Не удалось добавить новую!")
-		} else {
-			logger.Info("Добавление характеристики прошло успешно.")
-		}
+		id := database.NewFeature(result.Name)
+		logger.Info("Добавление характеристики " + string(id) + "прошло успешно.")
 		http.Redirect(w, r, "/edit/features", 302)
 	}
-}
-
-func createFeaturesPaths() []string {
-	result, err := database.GetAllFeatures()
-	if err != nil {
-		logger.Error(err, "Не удалось загрузить список характеристик!")
-	} else {
-		logger.Info("Список характеристик получен успешно.")
-	}
-	featuresPaths := make([]string, len(result))
-	for i := 0; i < len(result); i++ {
-		featuresPaths[i] = "/edit/features/" + strconv.Itoa(result[i].ID)
-	}
-	return featuresPaths
 }

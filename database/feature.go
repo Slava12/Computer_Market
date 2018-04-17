@@ -7,12 +7,13 @@ type Feature struct {
 }
 
 // NewFeature добавляет новую характеристику в базу данных
-func NewFeature(name string) error {
-	_, err := db.Exec("insert into features (name) values ($1)", name)
+func NewFeature(name string) (id int) {
+	/*_, err := db.Exec("insert into features (name) values ($1)", name)
 	if err != nil {
 		return err
-	}
-	return nil
+	}*/
+	db.QueryRow("insert into features (name) values ($1) returning id", name).Scan(&id)
+	return id
 }
 
 // DelFeature удаляет характеристику из базы данных
