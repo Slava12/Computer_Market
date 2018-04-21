@@ -23,33 +23,26 @@ func Init(path string) {
 }
 
 //Debug inform about bug
-func Debug(err error, message string) {
-	fmt.Println(message)
-	log.Debug(err, message)
+func Debug(message ...interface{}) {
+	fmt.Println(message...)
+	log.Debug(message...)
 }
 
 //Info on program execution
-func Info(message string) {
-	fmt.Println(message)
-	log.Info(message)
+func Info(message ...interface{}) {
+	fmt.Println(message...)
+	log.Info(message...)
 }
 
 //Warn about errors
-func Warn(err error, message string) {
-	fmt.Println(message)
-	log.Warn(err, message)
+func Warn(message ...interface{}) {
+	fmt.Println(message...)
+	log.Warn(message...)
 }
 
 //Error program
-func Error(err error, message string) {
-	fmt.Println(message)
-	log.Error(err, message)
+func Error(message ...interface{}) {
+	fmt.Println(message...)
+	log.Error(message...)
 	os.Exit(1)
-}
-
-//Fatal bug in program
-func Fatal(err error, message string) {
-	fmt.Println(message)
-	log.Fatal(err, message)
-	panic(message)
 }

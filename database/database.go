@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	// _ нужно, иначе пропадёт
+	// _ подключение пакета для работы с PostgreSQL
 	_ "github.com/lib/pq"
 
 	"github.com/Slava12/Computer_Market/config"

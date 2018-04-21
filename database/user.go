@@ -12,13 +12,13 @@ type User struct {
 }
 
 // NewUser добавляет нового пользователя в базу данных
-func NewUser(accessLevel int, login string, password string, email string, firstName string, secondName string) error {
-	_, err := db.Exec("insert into users (access_level, login, password, email, first_name, second_name) values ($1, $2, $3, $4, $5, $6)",
-		accessLevel, login, password, email, firstName, secondName)
+func NewUser(accessLevel int, login string, password string, email string, firstName string, secondName string) (id int, err error) {
+	err = db.QueryRow("insert into users (access_level, login, password, email, first_name, second_name) values ($1, $2, $3, $4, $5, $6) returning id",
+		accessLevel, login, password, email, firstName, secondName).Scan(&id)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 // DelUser удаляет пользователя из базы данных

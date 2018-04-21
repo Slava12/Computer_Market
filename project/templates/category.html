@@ -1,0 +1,24 @@
+<head>
+	<title>Категория {{.ID}}</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+<div class="form">
+	<form action="/update_category" method="post">
+		<div class=elem">
+			<div>ID</div>
+			<textarea name="id">{{.ID}}</textarea>
+		</div>
+		<div class=elem">
+			<div>Категория-родитель</div>
+			<textarea name="parentID">{{.ParentID}}</textarea>
+		</div>
+		<div>Характеристики</div>
+		{{range .Features}}
+		<div class="elem">
+			<input type="checkbox" name="feature{{.ID}}" checked/>{{.Name}}
+		</div>
+		{{end}}
+		<div><input type="submit" class="button"></div>
+	</form>
+</div>
+<div><button class="button"><a href="/edit/categories">Вернуться к списку категорий</a></button></div>

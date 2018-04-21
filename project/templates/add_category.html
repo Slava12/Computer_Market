@@ -1,0 +1,24 @@
+<head>
+	<title>Добавление характеристики</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+	<script src="../../assets/js/script.js"></script>
+</head>
+<div class="form">
+	<form action="/add_category" method="post">
+		<div class=elem">
+			<div>Категория-родитель</div>
+			<textarea name="parentID"></textarea>
+		</div>
+		<div class=elem">
+			<div>Название</div>
+			<textarea name="name"></textarea>
+		</div>
+		{{range .}}
+		<div class="elem">
+			<input type="checkbox" name="feature{{.ID}}">{{.Name}}
+		</div>
+		{{end}}
+		<div><input type="submit" class="button"></div>
+	</form>
+</div>
+<div><button class="button"><a href="/edit/categories">Вернуться к списку категорий</a></button></div>

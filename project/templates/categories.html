@@ -1,0 +1,18 @@
+<head>
+	<title>Категории</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+{{range .}}
+<div class="records">
+	<div class="record">{{.ID}}</div>
+	<div class="record">{{.ParentID}}</div>
+	<div class="record">{{.Name}}</div>
+	{{range .Features}}
+	<div class="elem">
+		<div class="record">{{.Name}}</div>
+	</div>
+	{{end}}
+	<button class="button"><a href="/edit/categories/{{.ID}}">Редактировать</a></button>
+</div>
+{{end}}
+<div><button class="button"><a href="/add_category">Добавить категорию</a></button></div>

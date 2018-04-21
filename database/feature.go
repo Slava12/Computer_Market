@@ -2,18 +2,17 @@ package database
 
 // Feature хранит данные о характеристике
 type Feature struct {
-	ID   int
-	Name string
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 // NewFeature добавляет новую характеристику в базу данных
-func NewFeature(name string) (id int) {
-	/*_, err := db.Exec("insert into features (name) values ($1)", name)
+func NewFeature(name string) (id int, err error) {
+	err = db.QueryRow("insert into features (name) values ($1) returning id", name).Scan(&id)
 	if err != nil {
-		return err
-	}*/
-	db.QueryRow("insert into features (name) values ($1) returning id", name).Scan(&id)
-	return id
+		return 0, err
+	}
+	return id, nil
 }
 
 // DelFeature удаляет характеристику из базы данных
@@ -56,7 +55,7 @@ func GetAllFeatures() ([]Feature, error) {
 
 // UpdateFeature обновляет значения полей характеристики
 func UpdateFeature(ID int, name string) error {
-	_, err := db.Exec("update features set name = $1 where id = $7", name, ID)
+	_, err := db.Exec("update features set name = $1 where id = $2", name, ID)
 	if err != nil {
 		return err
 	}
