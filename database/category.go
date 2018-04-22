@@ -58,24 +58,32 @@ func GetAllCategories() ([]Category, error) {
 	}
 	categories := []Category{}
 	category := Category{}
-	var features string
+	features := []string{}
+	feature := ""
 	for rows.Next() {
-		err = rows.Scan(&category.ID, &category.ParentID, &category.Name, &features)
+		err = rows.Scan(&category.ID, &category.ParentID, &category.Name, &feature)
 		if err != nil {
 			return []Category{}, err
 		}
-		errU := json.Unmarshal([]byte(features), &category.Features)
+		features = append(features, feature)
+		categories = append(categories, category)
+	}
+	for i := 0; i < len(categories); i++ {
+		errU := json.Unmarshal([]byte(features[i]), &categories[i].Features)
 		if errU != nil {
 			return []Category{}, err
 		}
-		categories = append(categories, category)
 	}
 	return categories, nil
 }
 
 // UpdateCategory обновляет значения полей категории
 func UpdateCategory(ID int, parentID int, name string, features []Feature) error {
-	_, err := db.Exec("update categories set parent_id = $1, name = $2, features = $3 where id = $4", parentID, name, features, ID)
+	featuresJSON, errMarshal := json.Marshal(features)
+	if errMarshal != nil {
+		return errMarshal
+	}
+	_, err := db.Exec("update categories set parent_id = $1, name = $2, features = $3 where id = $4", parentID, name, featuresJSON, ID)
 	if err != nil {
 		return err
 	}

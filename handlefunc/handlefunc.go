@@ -38,6 +38,7 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/edit/features/{id}", showFeature)
 
 	r.HandleFunc("/edit/categories", categories)
+	r.HandleFunc("/update_category", updateCategory)
 	r.HandleFunc("/add_category", addCategory)
 	r.HandleFunc("/edit/categories/{id}", showCategory)
 

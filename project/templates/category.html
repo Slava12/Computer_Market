@@ -1,22 +1,31 @@
 <head>
-	<title>Категория {{.ID}}</title>
+	<title>Категория {{.Category.ID}}</title>
 	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
 </head>
 <div class="form">
 	<form action="/update_category" method="post">
 		<div class=elem">
 			<div>ID</div>
-			<textarea name="id">{{.ID}}</textarea>
+			<textarea name="id">{{.Category.ID}}</textarea>
 		</div>
 		<div class=elem">
 			<div>Категория-родитель</div>
-			<textarea name="parentID">{{.ParentID}}</textarea>
+			<textarea name="parentID">{{.Category.ParentID}}</textarea>
 		</div>
-		<div>Характеристики</div>
+		<div class=elem">
+			<div>Название</div>
+			<textarea name="name">{{.Category.Name}}</textarea>
+		</div>
 		{{range .Features}}
+		{{if .Overlap}}
 		<div class="elem">
-			<input type="checkbox" name="feature{{.ID}}" checked/>{{.Name}}
+			<input type="checkbox" name="feature{{.Feature.ID}}" checked/>{{.Feature.Name}}
 		</div>
+		{{else}}
+		<div class="elem">
+			<input type="checkbox" name="feature{{.Feature.ID}}">{{.Feature.Name}}
+		</div>
+		{{end}}
 		{{end}}
 		<div><input type="submit" class="button"></div>
 	</form>

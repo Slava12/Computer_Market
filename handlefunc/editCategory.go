@@ -38,9 +38,34 @@ func showCategory(w http.ResponseWriter, r *http.Request) {
 	} else {
 		logger.Info("Данные о категории ", categoryID, " получены успешно.")
 	}
+	features, err := database.GetAllFeatures()
+	if err != nil {
+		logger.Warn(err, "Не удалось загрузить список характеристик!")
+	} else {
+		logger.Info("Список характеристик получен успешно.")
+	}
+	type FeatureBool struct {
+		Feature database.Feature
+		Overlap bool
+	}
+	type Data struct {
+		Category database.Category
+		Features []FeatureBool
+	}
+	data := Data{}
+	data.Category = category
+	data.Features = make([]FeatureBool, len(features))
+	for i := 0; i < len(features); i++ {
+		data.Features[i].Feature = features[i]
+		for j := 0; j < len(category.Features); j++ {
+			if features[i].ID == category.Features[j].ID {
+				data.Features[i].Overlap = true
+			}
+		}
+	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "category.html", category)
+		err := tpl.ExecuteTemplate(w, "category.html", data)
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
@@ -53,7 +78,25 @@ func updateCategory(w http.ResponseWriter, r *http.Request) {
 		result.ID, _ = strconv.Atoi(r.FormValue("id"))
 		result.ParentID, _ = strconv.Atoi(r.FormValue("parentID"))
 		result.Name = r.FormValue("name")
-		err := database.UpdateCategory(result.ID, result.ParentID, result.Name, result.Features)
+		features, err := database.GetAllFeatures()
+		if err != nil {
+			logger.Warn(err, "Не удалось загрузить список характеристик!")
+		} else {
+			logger.Info("Список характеристик получен успешно.")
+		}
+		j := 0
+		tempFeatures := make([]database.Feature, len(features))
+		for i := 0; i < len(features); i++ {
+			if r.FormValue("feature"+strconv.Itoa(features[i].ID)) != "" {
+				tempFeatures[j] = features[i]
+				j++
+			}
+		}
+		result.Features = make([]database.Feature, j)
+		for i := 0; i < j; i++ {
+			result.Features[i] = tempFeatures[i]
+		}
+		err = database.UpdateCategory(result.ID, result.ParentID, result.Name, result.Features)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить категорию ", result.ID, "!")
 		} else {
@@ -93,15 +136,6 @@ func addCategory(w http.ResponseWriter, r *http.Request) {
 		for i := 0; i < j; i++ {
 			result.Features[i] = tempFeatures[i]
 		}
-		/*lol, errM := json.Marshal(result.Features) // пример
-		if errM != nil {
-			fmt.Println("Err Marshal")
-		}
-		kek := make([]database.Feature, len(result.Features))
-		errU := json.Unmarshal(lol, &kek)
-		if errU != nil {
-			fmt.Println("Err Unmarshal")
-		}*/
 		id, errAdd := database.NewCategory(result.ParentID, result.Name, result.Features)
 		if errAdd != nil {
 			logger.Warn(errAdd, "Не удалось добавить новую категорию!")
