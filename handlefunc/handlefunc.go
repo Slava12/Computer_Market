@@ -18,7 +18,6 @@ func InitHTTP(configFile config.Config) {
 
 	r := mux.NewRouter()
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
-	//r.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 
 	r.HandleFunc("/index", index)
 	r.HandleFunc("/login", login)
@@ -41,6 +40,11 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/update_category", updateCategory)
 	r.HandleFunc("/add_category", addCategory)
 	r.HandleFunc("/edit/categories/{id}", showCategory)
+
+	r.HandleFunc("/edit/units", units)
+	r.HandleFunc("/update_unit", updateUnit)
+	r.HandleFunc("/add_unit", addUnit)
+	r.HandleFunc("/edit/units/{id}", showUnit)
 
 	port := configFile.HTTP.Port
 

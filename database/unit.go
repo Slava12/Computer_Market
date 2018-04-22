@@ -1,6 +1,14 @@
 package database
 
-// Unit хранит данные о характеристике
+import "encoding/json"
+
+// FeatureUnit хранит данные о характеристиках товара
+type FeatureUnit struct {
+	FeatureName string `json:"featurename"`
+	Value       string `json:"value"`
+}
+
+// Unit хранит данные о товаре
 type Unit struct {
 	ID         int
 	Name       string
@@ -8,14 +16,22 @@ type Unit struct {
 	Quantity   int
 	Price      int
 	Discount   int
-	Features   map[string]string
-	Pictures   []string
+	Features   []FeatureUnit
+	Pictures   []string `json:"pictures"`
 }
 
 // NewUnit добавляет новый товар в базу данных
-func NewUnit(name string, categoryID int, quantity int, price int, discount int, features map[string]string, pictures []string) (id int, err error) {
+func NewUnit(name string, categoryID int, quantity int, price int, discount int, features []FeatureUnit, pictures []string) (id int, err error) {
+	featuresJSON, errMarshal := json.Marshal(features)
+	if errMarshal != nil {
+		return 0, errMarshal
+	}
+	picturesJSON, errMarshal := json.Marshal(pictures)
+	if errMarshal != nil {
+		return 0, errMarshal
+	}
 	err = db.QueryRow("insert into units (name, category_id, quantity, price, discount, features, pictures) values ($1, $2, $3, $4, $5, $6, $7) returning id",
-		name, categoryID, quantity, price, discount, features, pictures).Scan(&id)
+		name, categoryID, quantity, price, discount, featuresJSON, picturesJSON).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -61,7 +77,7 @@ func GetAllUnits() ([]Unit, error) {
 }
 
 // UpdateUnit обновляет значения полей товара
-func UpdateUnit(ID int, name string, categoryID int, quantity int, price int, discount int, features map[string]string, pictures []string) error {
+func UpdateUnit(ID int, name string, categoryID int, quantity int, price int, discount int, features []FeatureUnit, pictures []string) error {
 	_, err := db.Exec("update categories set name = $1, category_id = $2, quantity = $3, price = $4, discount = $5, features = $6, pictures = $7 where id = $8",
 		name, categoryID, quantity, price, discount, features, pictures, ID)
 	if err != nil {
