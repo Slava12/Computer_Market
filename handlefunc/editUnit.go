@@ -66,9 +66,15 @@ func updateUnit(w http.ResponseWriter, r *http.Request) {
 }
 
 func addUnit(w http.ResponseWriter, r *http.Request) {
+	categories, err := database.GetAllCategories()
+	if err != nil {
+		logger.Warn(err, "Не удалось загрузить список категорий!")
+	} else {
+		logger.Info("Список категорий получен успешно.")
+	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "add_unit.html", nil)
+		err := tpl.ExecuteTemplate(w, "add_unit.html", categories)
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
@@ -76,7 +82,13 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		result := database.Unit{}
 		result.Name = r.FormValue("name")
-		result.CategoryID, _ = strconv.Atoi(r.FormValue("categoryID"))
+		category, err := database.GetCategoryByName(r.FormValue("category"))
+		if err != nil {
+			logger.Warn(err, "Не удалось получить запись о категории ", category.ID, "!")
+		} else {
+			logger.Info("Данные о категории ", category.ID, " получены успешно.")
+		}
+		result.CategoryID = category.ID
 		result.Quantity, _ = strconv.Atoi(r.FormValue("quantity"))
 		result.Price, _ = strconv.Atoi(r.FormValue("price"))
 		result.Discount, _ = strconv.Atoi(r.FormValue("discount"))

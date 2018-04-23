@@ -50,6 +50,22 @@ func GetCategory(ID int) (Category, error) {
 	return category, nil
 }
 
+// GetCategoryByName возвращает данные о категории по её имени
+func GetCategoryByName(name string) (Category, error) {
+	row := db.QueryRow("select * from categories where name=$1", name)
+	category := Category{}
+	var features string
+	err := row.Scan(&category.ID, &category.ParentID, &category.Name, &features)
+	if err != nil {
+		return Category{}, err
+	}
+	errU := json.Unmarshal([]byte(features), &category.Features)
+	if errU != nil {
+		return Category{}, err
+	}
+	return category, nil
+}
+
 // GetAllCategories возвращает данные обо всех категориях
 func GetAllCategories() ([]Category, error) {
 	rows, err := db.Query("select * from categories")
