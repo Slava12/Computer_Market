@@ -1,8 +1,11 @@
 package handlefunc
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+
+	"strings"
 
 	"github.com/Slava12/Computer_Market/database"
 	"github.com/Slava12/Computer_Market/logger"
@@ -86,13 +89,31 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 		result.Quantity, _ = strconv.Atoi(r.FormValue("quantity"))
 		result.Price, _ = strconv.Atoi(r.FormValue("price"))
 		result.Discount, _ = strconv.Atoi(r.FormValue("discount"))
-		_ = r.FormValue("features")
-		id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
+		features := r.FormValue("features")
+		arrayString := strings.Split(features, ";")
+		result.Features = make([]database.FeatureUnit, len(arrayString))
+		for i := 0; i < len(arrayString); i++ {
+			res := strings.Split(arrayString[i], " ")
+			result.Features[i].FeatureName = res[0]
+			result.Features[i].Value = res[1]
+		}
+		numberOfPictures, _ := strconv.Atoi(r.FormValue("pictures"))
+		for i := 0; i < numberOfPictures; i++ {
+			name := "file" + strconv.Itoa(i)
+			_, fileHeader, err := r.FormFile(name)
+			if err != nil {
+				logger.Warn(err, "Ошибка получения файла!")
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
+			fmt.Println(fileHeader.Filename)
+		}
+		/*id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
 		if errAdd != nil {
 			logger.Warn(errAdd, "Не удалось добавить новый товар!")
 		} else {
 			logger.Info("Добавление товара ", id, " прошло успешно.")
 		}
-		http.Redirect(w, r, "/edit/units", 302)
+		http.Redirect(w, r, "/edit/units", 302)*/
 	}
 }

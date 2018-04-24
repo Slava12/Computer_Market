@@ -22,27 +22,34 @@ function SetFeatures() {
     var n = document.getElementById(val).children.length;
     for (i = 0; i < n; i++) {
         var elem = document.getElementById(val).children[i];
-        var noteI  = elem.lastElementChild;
+        var noteName  = elem.firstElementChild;
+        var noteValue  = elem.lastElementChild;
         if (i == n - 1) {
-            features.value += noteI.value;
+            features.value += noteName.innerHTML + " " + noteValue.value;
         }
         else {
-            features.value += noteI.value + ";";
+            features.value += noteName.innerHTML + " " + noteValue.value + ";";
         }
     }
+    SetNumberOfPictures();
 }
 
 var imageCount = 0;
 function ShowButton() {
     if (imageCount < 10) {
         var div = document.createElement('div');
-        div.className = "picture" + imageCount;
-        div.innerHTML = "<input class=\"inputFile\" type=\"file\" name=\"file1\" accept=\"image/*\">";
+        div.className = "picture";
+        div.innerHTML = "<input class=\"inputFile\" type=\"file\" name=\"file" + imageCount + "\" accept=\"image/*\">";
 
         document.getElementById("pictures").appendChild(div);
         imageCount++;
     }
-    else {
+    if (imageCount == 10) {
         document.getElementById("addPic").style.display = "none";
     }
+}
+
+function SetNumberOfPictures() {
+    var pictures = document.getElementById("picturesNumber");
+    pictures.value = imageCount;
 }

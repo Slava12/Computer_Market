@@ -4,7 +4,7 @@
 	<script src="../../assets/js/script.js"></script>
 </head>
 <div class="form">
-	<form method="post" action="/add_unit">
+	<form method="post" action="/add_unit" enctype="multipart/form-data">
 		<div class="elem">
 			<div>Название</div>
 			<textarea name="name"></textarea>
@@ -30,7 +30,7 @@
         {{range .}}
 		<div class="features" id="{{.ID}}">
             {{range .Features}}
-                <div class="elem" id="lol">
+                <div class="elem">
                     <div>{{.Name}}</div>
                     <textarea name="featureID{{.ID}}"></textarea>
                 </div>
@@ -38,6 +38,7 @@
 		</div>
         {{end}}
 		<textarea name="features" id="features" class="features"></textarea>
+		<textarea name="pictures" id="picturesNumber" class="features"></textarea>
 		<div id="pictures"></div>
 		<div><button type="button" class="button" id="addPic" onclick="ShowButton()">Добавить изображения</button></div>
 		<div><input type="submit" class="button" onclick="SetFeatures()"></div>
