@@ -1,18 +1,19 @@
-var i = 0;
-function AddFeature(){
-    /*var div = document.createElement('div');
-    div.classList.add("elem");
-    var sel = document.createElement ('select');
-    sel.setAttribute('name', 'feature');*/
-    var name1 = "feature" + i;
-    alert(name1);
-    document.getElementById('last').innerHTML += '<div class="elem">\n' +
-        '<select name=name1 aria-required="true">\n' +
-        '\t\t\t\t<option disabled selected>Характеристика</option>\n' +
-        '\t\t\t\t{{range .}}\n' +
-        '\t\t\t\t<option value={{.ID}}>{{.Name}}</option>\n' +
-        '\t\t\t\t{{end}}\n' +
-        '\t\t\t</select>\n' +
-        '\t\t</div>';
-    i++;
+function Selected(a) {
+    var label = a.value;
+    var categories = document.getElementsByClassName('category');
+    for (i = 0; i < categories.length; i++) {
+        var name = categories[i].value
+        if (label==name) {
+            document.getElementById(name).style.display='block';
+        }
+        else {
+            document.getElementById(name).style.display='none';
+        }
+    }
+}
+
+function Set() {
+    var selectedIndex = document.getElementById("categorySelect").options.selectedIndex;
+    var val= document.getElementById("categorySelect").options[selectedIndex].value;
+    console.log(document.getElementById(val));
 }

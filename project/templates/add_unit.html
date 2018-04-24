@@ -1,20 +1,56 @@
 <head>
 	<title>Добавление товара</title>
-	<link rel="stylesheet" type="text/css" href="../../assets/css/menu_style.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
 	<script src="../../assets/js/script.js"></script>
 </head>
 <div class="form">
 	<form action="/add_unit" method="post">
-		<div class=elem">
+		<div class="elem">
 			<div>Название</div>
 			<textarea name="name"></textarea>
 		</div>
-		{{range .}}
 		<div class="elem">
-			<input type="checkbox" name="category{{.ID}}">{{.Name}}
+			<div>Количество</div>
+			<textarea name="quantity"></textarea>
 		</div>
-		{{end}}
+		<div class="elem">
+			<div>Цена</div>
+			<textarea name="price"></textarea>
+		</div>
+		<div class="elem">
+			<div>Скидка</div>
+			<textarea name="discount"></textarea>
+		</div>
+		<select name="category" id="categorySelect" aria-required="true" onChange="Selected(this)">
+			<option disabled selected>Категория</option>
+			{{range .}}
+			<option class="category" value="{{.ID}}">{{.Name}}</option>
+			{{end}}
+		</select>
+        {{range .}}
+		<div class="features" id="{{.ID}}">
+            {{range .Features}}
+                <div class="elem">
+                    <div>{{.Name}}</div>
+                    <textarea name="featureID{{.ID}}"></textarea>
+                </div>
+            {{end}}
+		</div>
+        {{end}}
+		<div class="features" name="features"></div>
+		<legend class="legend">Добавить изображения</legend>
+		<input class="inputFile" type="file" name="file0" accept="image/*" required>
+		<input class="inputFile" type="file" name="file1" accept="image/*">
+		<input class="inputFile" type="file" name="file2" accept="image/*">
+		<input class="inputFile" type="file" name="file3" accept="image/*">
+		<input class="inputFile" type="file" name="file4" accept="image/*">
+		<input class="inputFile" type="file" name="file5" accept="image/*">
+		<input class="inputFile" type="file" name="file6" accept="image/*">
+		<input class="inputFile" type="file" name="file7" accept="image/*">
+		<input class="inputFile" type="file" name="file8" accept="image/*">
+		<input class="inputFile" type="file" name="file9" accept="image/*">
 		<div><input type="submit" class="button"></div>
 	</form>
 </div>
+<div><button class="button" onclick="Set()">Подтвердить</button></div>
 <div><button class="button"><a href="/edit/units">Вернуться к списку товаров</a></button></div>
