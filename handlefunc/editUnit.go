@@ -82,16 +82,11 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		result := database.Unit{}
 		result.Name = r.FormValue("name")
-		category, err := database.GetCategoryByName(r.FormValue("category"))
-		if err != nil {
-			logger.Warn(err, "Не удалось получить запись о категории ", category.ID, "!")
-		} else {
-			logger.Info("Данные о категории ", category.ID, " получены успешно.")
-		}
-		result.CategoryID = category.ID
+		result.CategoryID, _ = strconv.Atoi(r.FormValue("category"))
 		result.Quantity, _ = strconv.Atoi(r.FormValue("quantity"))
 		result.Price, _ = strconv.Atoi(r.FormValue("price"))
 		result.Discount, _ = strconv.Atoi(r.FormValue("discount"))
+		_ = r.FormValue("features")
 		id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
 		if errAdd != nil {
 			logger.Warn(errAdd, "Не удалось добавить новый товар!")

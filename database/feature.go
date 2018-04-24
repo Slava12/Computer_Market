@@ -37,7 +37,7 @@ func GetFeature(ID int) (Feature, error) {
 
 // GetAllFeatures возвращает данные обо всех характеристиках
 func GetAllFeatures() ([]Feature, error) {
-	rows, err := db.Query("select * from features")
+	rows, err := db.Query("select * from features order by id asc")
 	if err != nil {
 		return []Feature{}, err
 	}

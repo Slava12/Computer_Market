@@ -60,7 +60,7 @@ func GetUnit(ID int) (Unit, error) {
 
 // GetAllUnits возвращает данные обо всех товарах
 func GetAllUnits() ([]Unit, error) {
-	rows, err := db.Query("select * from units")
+	rows, err := db.Query("select * from units order by id asc")
 	if err != nil {
 		return []Unit{}, err
 	}

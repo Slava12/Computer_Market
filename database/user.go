@@ -43,7 +43,7 @@ func GetUser(ID int) (User, error) {
 
 // GetAllUsers возвращает данные обо всех пользователях
 func GetAllUsers() ([]User, error) {
-	rows, err := db.Query("select * from users")
+	rows, err := db.Query("select * from users order by id asc")
 	if err != nil {
 		return []User{}, err
 	}
