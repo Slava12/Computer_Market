@@ -11,6 +11,7 @@ type Config struct {
 	HTTP     HTTP     `yaml:"http"`
 	Database Database `yaml:"database"`
 	Logs     Logs     `yaml:"logs"`
+	Files    Files    `yaml:"files"`
 }
 
 // HTTP содержит данные конфига, связанные с протоколом HTTP
@@ -31,6 +32,12 @@ type Database struct {
 
 // Logs содержит данные конфига, связанные с логированием
 type Logs struct {
+	Folder string `yaml:"folder"`
+	Name   string `yaml:"name"`
+}
+
+// Files содержит данные конфига, связанные с хранением файлов на сервере
+type Files struct {
 	Folder string `yaml:"folder"`
 }
 

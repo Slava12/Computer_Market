@@ -9,4 +9,7 @@ database:
     port: 5432
     sslmode: disable
 logs:
-    folder: ./Logs/logs.txt
+    folder: logs/
+    name: logs.txt
+files:
+    folder: pictures/

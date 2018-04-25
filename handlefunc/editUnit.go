@@ -1,13 +1,13 @@
 package handlefunc
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"strings"
 
 	"github.com/Slava12/Computer_Market/database"
+	"github.com/Slava12/Computer_Market/files"
 	"github.com/Slava12/Computer_Market/logger"
 	"github.com/gorilla/mux"
 )
@@ -94,10 +94,19 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 		result.Features = make([]database.FeatureUnit, len(arrayString))
 		for i := 0; i < len(arrayString); i++ {
 			res := strings.Split(arrayString[i], " ")
-			result.Features[i].FeatureName = res[0]
+			result.Features[i].Name = res[0]
 			result.Features[i].Value = res[1]
 		}
+		id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
+		if errAdd != nil {
+			logger.Warn(errAdd, "Не удалось добавить новый товар!")
+		} else {
+			logger.Info("Добавление товара ", id, " прошло успешно.")
+		}
+		filePath := filesFolder + strconv.Itoa(id) + "/"
+		files.CreateDirectory(filePath)
 		numberOfPictures, _ := strconv.Atoi(r.FormValue("pictures"))
+		result.Pictures = make([]string, numberOfPictures)
 		for i := 0; i < numberOfPictures; i++ {
 			name := "file" + strconv.Itoa(i)
 			_, fileHeader, err := r.FormFile(name)
@@ -106,14 +115,15 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			fmt.Println(fileHeader.Filename)
+			fileName := files.Save(filePath, fileHeader)
+			result.Pictures[i] = fileName
 		}
-		/*id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
-		if errAdd != nil {
-			logger.Warn(errAdd, "Не удалось добавить новый товар!")
+		errUpdate := database.UpdateUnit(id, result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
+		if errUpdate != nil {
+			logger.Warn(errAdd, "Не удалось обновить информацию о товаре ", id, "!")
 		} else {
-			logger.Info("Добавление товара ", id, " прошло успешно.")
+			logger.Info("Обновление информации о товаре ", id, " прошло успешно.")
 		}
-		http.Redirect(w, r, "/edit/units", 302)*/
+		http.Redirect(w, r, "/edit/units", 302)
 	}
 }

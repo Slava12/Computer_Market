@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	tpl *template.Template
+	tpl         *template.Template
+	filesFolder string
 )
 
 // InitHTTP инициализирует сетевые функции приложения
@@ -47,6 +48,8 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/edit/units/{id}", showUnit)
 
 	port := configFile.HTTP.Port
+
+	filesFolder = configFile.Files.Folder
 
 	http.ListenAndServe(":"+port, r)
 }

@@ -5,3 +5,5 @@
 Computer_Market
 .directory
 /project/.idea/*
+/project/logs/*
+/project/pictures/*

@@ -4,8 +4,8 @@ import "encoding/json"
 
 // FeatureUnit хранит данные о характеристиках товара
 type FeatureUnit struct {
-	FeatureName string `json:"featurename"`
-	Value       string `json:"value"`
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 // Unit хранит данные о товаре
@@ -78,8 +78,16 @@ func GetAllUnits() ([]Unit, error) {
 
 // UpdateUnit обновляет значения полей товара
 func UpdateUnit(ID int, name string, categoryID int, quantity int, price int, discount int, features []FeatureUnit, pictures []string) error {
-	_, err := db.Exec("update categories set name = $1, category_id = $2, quantity = $3, price = $4, discount = $5, features = $6, pictures = $7 where id = $8",
-		name, categoryID, quantity, price, discount, features, pictures, ID)
+	featuresJSON, errMarshal := json.Marshal(features)
+	if errMarshal != nil {
+		return errMarshal
+	}
+	picturesJSON, errMarshal := json.Marshal(pictures)
+	if errMarshal != nil {
+		return errMarshal
+	}
+	_, err := db.Exec("update units set name = $1, category_id = $2, quantity = $3, price = $4, discount = $5, features = $6, pictures = $7 where id = $8",
+		name, categoryID, quantity, price, discount, featuresJSON, picturesJSON, ID)
 	if err != nil {
 		return err
 	}
