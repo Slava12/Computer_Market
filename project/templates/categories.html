@@ -4,9 +4,13 @@
 </head>
 {{range .}}
 <div class="records">
+	<div class="fieldName">ID:</div>
 	<div class="record">{{.ID}}</div>
+	<div class="fieldName">Категория-родитель:</div>
 	<div class="record">{{.ParentID}}</div>
+	<div class="fieldName">Название:</div>
 	<div class="record">{{.Name}}</div>
+	<div class="fieldName">Характеристики:</div>
 	{{range .Features}}
 	<div class="elem">
 		<div class="record">{{.Name}}</div>

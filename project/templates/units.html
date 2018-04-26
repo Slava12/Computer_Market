@@ -4,12 +4,27 @@
 </head>
 {{range .}}
 <div class="records">
+	<div class="fieldName">ID:</div>
 	<div class="record">{{.ID}}</div>
+	<div class="fieldName">Название:</div>
 	<div class="record">{{.Name}}</div>
+	<div class="fieldName">ID категории:</div>
 	<div class="record">{{.CategoryID}}</div>
+	<div class="fieldName">Количество:</div>
 	<div class="record">{{.Quantity}}</div>
+	<div class="fieldName">Цена:</div>
 	<div class="record">{{.Price}}</div>
+	<div class="fieldName">Скидка:</div>
 	<div class="record">{{.Discount}}</div>
+	<div class="fieldName">Характеристики:</div>
+	{{range .Features}}
+		<div class="record">{{.Name}}</div>
+		<div class="record">{{.Value}}</div>
+	{{end}}
+	<div class="fieldName">Изображения:</div>
+	{{range .Pictures}}
+	<div class="record">{{.}}</div>
+	{{end}}
 	<button class="button"><a href="/edit/units/{{.ID}}">Редактировать</a></button>
 </div>
 {{end}}

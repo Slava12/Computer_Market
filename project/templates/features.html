@@ -4,7 +4,9 @@
 </head>
 {{range .}}
 <div class="records">
+	<div class="fieldName">ID:</div>
 	<div class="record">{{.ID}}</div>
+	<div class="fieldName">Название:</div>
 	<div class="record">{{.Name}}</div>
 	<button class="button"><a href="/edit/features/{{.ID}}">Редактировать</a></button>
 </div>
