@@ -1,0 +1,17 @@
+<head>
+	<title>Товары</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+{{range .}}
+<div class="records">
+	<div class="record">{{.ID}}</div>
+	<div class="record">{{.Name}}</div>
+	<div class="record">{{.CategoryID}}</div>
+	<div class="record">{{.Quantity}}</div>
+	<div class="record">{{.Price}}</div>
+	<div class="record">{{.Discount}}</div>
+	<button class="button"><a href="/edit/units/{{.ID}}">Редактировать</a></button>
+</div>
+{{end}}
+<div><button class="button"><a href="/add_unit">Добавить товар</a></button></div>
+<div><button class="button"><a href="/edit">Вернуться ко всем записям</a></button></div>

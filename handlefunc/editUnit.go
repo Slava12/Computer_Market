@@ -115,7 +115,8 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			fileName := files.Save(filePath, fileHeader)
+			fileName := strconv.Itoa(i)
+			fileName = files.Save(filePath, fileHeader, fileName)
 			result.Pictures[i] = fileName
 		}
 		errUpdate := database.UpdateUnit(id, result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)

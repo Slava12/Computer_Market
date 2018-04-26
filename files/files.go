@@ -12,34 +12,35 @@ import (
 )
 
 // Save сохраняет файл на сервер
-func Save(filePath string, fileHeader *multipart.FileHeader) string {
+func Save(filePath string, fileHeader *multipart.FileHeader, fileName string) string {
 	file, err := fileHeader.Open()
 
 	bytesOfFile, err := ioutil.ReadAll(file)
 	if err != nil {
-		logger.Warn(err, "Файл", fileHeader.Filename, "не был прочитан!")
+		logger.Warn(err, "Файл ", fileHeader.Filename, " не был прочитан!")
 		return ""
 	}
-	fileName := generateName(10)
+	//fileName := generateName(10)
+
 	extension := filepath.Ext(fileHeader.Filename)
 	fullFilePath := filePath + fileName + extension
 
 	fileInServer, err := os.Create(fullFilePath)
 	if err != nil {
-		logger.Warn(err, "Файл", fullFilePath, "не был создан!")
+		logger.Warn(err, "Файл ", fullFilePath, " не был создан!")
 		return ""
 	}
-	logger.Info("Файл", fullFilePath, "был создан.")
+	logger.Info("Файл ", fullFilePath, " был создан.")
 
 	_, err = fileInServer.Write(bytesOfFile)
 	if err != nil {
-		logger.Warn(err, "Запись файла", fullFilePath, "не удалась!")
+		logger.Warn(err, "Запись файла ", fullFilePath, " не удалась!")
 		return ""
 	}
-	logger.Info("Файл", fullFilePath, "был записан.")
+	logger.Info("Файл ", fullFilePath, " был записан.")
 
 	fileInServer.Close()
-	logger.Info("Файл", fullFilePath, "был закрыт.")
+	logger.Info("Файл ", fullFilePath, " был закрыт.")
 	return fullFilePath
 }
 
@@ -71,10 +72,10 @@ func generateName(n int) string {
 
 func exists(path string) bool {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		logger.Info("Указанный путь", path, " не существует.")
+		//logger.Info("Указанный путь", path, " не существует.")
 		return false
 	}
-	logger.Info("Указанный путь", path, " существует.")
+	//logger.Info("Указанный путь", path, " существует.")
 	return true
 }
 
@@ -84,9 +85,9 @@ func CreateDirectory(path string) {
 	if exist == false {
 		err := os.Mkdir(path, 0777)
 		if err != nil {
-			logger.Warn("Директория", path, " не была создана!")
+			//logger.Warn("Директория", path, " не была создана!")
 		} else {
-			logger.Info("Директория", path, " была создана.")
+			//logger.Info("Директория", path, " была создана.")
 		}
 	}
 }
