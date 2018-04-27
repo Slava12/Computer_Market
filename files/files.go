@@ -61,3 +61,13 @@ func CreateDirectory(path string) {
 		}
 	}
 }
+
+// RemoveAllFiles удаляет все файлы из указанной директории
+func RemoveAllFiles(path string) {
+	err := os.RemoveAll(path)
+	if err != nil {
+		logger.Warn(err, "В директории ", path, " не удалось произвести удаление всех файлов!")
+	} else {
+		logger.Info("В директории ", path, " были удалены все файлы.")
+	}
+}

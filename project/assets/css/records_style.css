@@ -1,3 +1,11 @@
 .features {
     display: none;
 }
+
+.fieldName {
+    margin-left: 25px;
+}
+
+.record {
+    margin-left: 50px;
+}

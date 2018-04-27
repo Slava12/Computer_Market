@@ -46,6 +46,8 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/update_unit", updateUnit)
 	r.HandleFunc("/add_unit", addUnit)
 	r.HandleFunc("/edit/units/{id}", showUnit)
+	r.HandleFunc("/delete_unit", delUnit)
+	r.HandleFunc("/delete_all_units", delAllUnits)
 
 	port := configFile.HTTP.Port
 

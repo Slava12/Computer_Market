@@ -47,6 +47,15 @@ func DelUnit(ID int) error {
 	return nil
 }
 
+// DelAllUnits удаляет все товары из базы данных
+func DelAllUnits() error {
+	_, err := db.Exec("delete from units")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetUnit возвращает данные о товаре по его ID
 func GetUnit(ID int) (Unit, error) {
 	row := db.QueryRow("select * from units where id=$1", ID)

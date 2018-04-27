@@ -1,0 +1,24 @@
+<head>
+	<title>Товар {{.ID}}</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+<div class="form">
+	<form action="/update_unit" method="post">
+		<div class=elem">
+			<div>ID</div>
+			<textarea name="id">{{.ID}}</textarea>
+		</div>
+		<div class=elem">
+			<div>Название</div>
+			<textarea name="name">{{.Name}}</textarea>
+		</div>
+		<div><input type="submit" class="button"></div>
+	</form>
+</div>
+<div class="form">
+	<form action="/delete_unit" method="post">
+		<textarea class="features" name="id">{{.ID}}</textarea>
+		<div><input type="submit" class="button" value="Удалить товар"></div>
+	</form>
+</div>
+<div><button class="button"><a href="/edit/units">Вернуться к списку категорий</a></button></div>

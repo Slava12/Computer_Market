@@ -128,3 +128,32 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/edit/units", 302)
 	}
 }
+
+func delUnit(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		unitID, _ := strconv.Atoi(r.FormValue("id"))
+		err := database.DelUnit(unitID)
+		if err != nil {
+			logger.Warn(err, "Не удалось удалить запись о товаре ", unitID, "!")
+		} else {
+			logger.Info("Удаление записи о товаре ", unitID, " прошло успешно.")
+		}
+		path := "pictures/" + strconv.Itoa(unitID) + "/"
+		files.RemoveAllFiles(path)
+		http.Redirect(w, r, "/edit/units", 302)
+	}
+}
+
+func delAllUnits(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		err := database.DelAllUnits()
+		if err != nil {
+			logger.Warn(err, "Не удалось удалить все записи о товарах!")
+		} else {
+			logger.Info("Удаление всех записей о товарах прошло успешно.")
+		}
+		path := "pictures/"
+		files.RemoveAllFiles(path)
+		http.Redirect(w, r, "/edit/units", 302)
+	}
+}
