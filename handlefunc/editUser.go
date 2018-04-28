@@ -92,3 +92,28 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/edit/users", 302)
 	}
 }
+
+func delUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		userID, _ := strconv.Atoi(r.FormValue("id"))
+		err := database.DelUser(userID)
+		if err != nil {
+			logger.Warn(err, "Не удалось удалить запись о пользователе ", userID, "!")
+		} else {
+			logger.Info("Удаление записи о пользователе ", userID, " прошло успешно.")
+		}
+		http.Redirect(w, r, "/edit/users", 302)
+	}
+}
+
+func delAllUsers(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		err := database.DelAllUsers()
+		if err != nil {
+			logger.Warn(err, "Не удалось удалить всех пользователей!")
+		} else {
+			logger.Info("Удаление всех пользователей прошло успешно.")
+		}
+		http.Redirect(w, r, "/edit/users", 302)
+	}
+}

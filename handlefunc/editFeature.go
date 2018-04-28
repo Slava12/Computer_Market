@@ -83,3 +83,28 @@ func addFeature(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/edit/features", 302)
 	}
 }
+
+func delFeature(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		featureID, _ := strconv.Atoi(r.FormValue("id"))
+		err := database.DelFeature(featureID)
+		if err != nil {
+			logger.Warn(err, "Не удалось удалить запись о характеристике ", featureID, "!")
+		} else {
+			logger.Info("Удаление записи о характеристике ", featureID, " прошло успешно.")
+		}
+		http.Redirect(w, r, "/edit/features", 302)
+	}
+}
+
+func delAllFeatures(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		err := database.DelAllFeatures()
+		if err != nil {
+			logger.Warn(err, "Не удалось удалить все записи о характеристиках!")
+		} else {
+			logger.Info("Удаление всех записей о характеристиках прошло успешно.")
+		}
+		http.Redirect(w, r, "/edit/features", 302)
+	}
+}

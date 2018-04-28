@@ -34,6 +34,15 @@ func DelCategory(ID int) error {
 	return nil
 }
 
+// DelAllCategories удаляет все категории из базы данных
+func DelAllCategories() error {
+	_, err := db.Exec("delete from categories")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetCategory возвращает данные о категории по её ID
 func GetCategory(ID int) (Category, error) {
 	row := db.QueryRow("select * from categories where id=$1", ID)

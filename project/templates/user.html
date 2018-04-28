@@ -35,4 +35,10 @@
 		<div><input type="submit" class="button"></div>
 	</form>
 </div>
+<div class="form">
+	<form action="/delete_user" method="post">
+		<textarea class="features" name="id">{{.ID}}</textarea>
+		<div><input type="submit" class="button" value="Удалить пользователя"></div>
+	</form>
+</div>
 <div><button class="button"><a href="/edit/users">Вернуться к списку пользователей</a></button></div>

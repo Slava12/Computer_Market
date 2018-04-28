@@ -24,6 +24,15 @@ func DelFeature(ID int) error {
 	return nil
 }
 
+// DelAllFeatures удаляет характеристику из базы данных
+func DelAllFeatures() error {
+	_, err := db.Exec("delete from features")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetFeature возвращает данные о характеристике по её ID
 func GetFeature(ID int) (Feature, error) {
 	row := db.QueryRow("select * from features where id=$1", ID)

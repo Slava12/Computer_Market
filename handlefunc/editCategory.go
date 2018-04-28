@@ -145,3 +145,28 @@ func addCategory(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/edit/categories", 302)
 	}
 }
+
+func delCategory(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		categoryID, _ := strconv.Atoi(r.FormValue("id"))
+		err := database.DelCategory(categoryID)
+		if err != nil {
+			logger.Warn(err, "Не удалось удалить запись о категории ", categoryID, "!")
+		} else {
+			logger.Info("Удаление записи о категории ", categoryID, " прошло успешно.")
+		}
+		http.Redirect(w, r, "/edit/categories", 302)
+	}
+}
+
+func delAllCategories(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		err := database.DelAllCategories()
+		if err != nil {
+			logger.Warn(err, "Не удалось удалить все записи о категориях!")
+		} else {
+			logger.Info("Удаление всех записей о категориях прошло успешно.")
+		}
+		http.Redirect(w, r, "/edit/categories", 302)
+	}
+}

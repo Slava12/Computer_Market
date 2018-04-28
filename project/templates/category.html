@@ -30,4 +30,10 @@
 		<div><input type="submit" class="button"></div>
 	</form>
 </div>
+<div class="form">
+	<form action="/delete_category" method="post">
+		<textarea class="features" name="id">{{.Category.ID}}</textarea>
+		<div><input type="submit" class="button" value="Удалить категорию"></div>
+	</form>
+</div>
 <div><button class="button"><a href="/edit/categories">Вернуться к списку категорий</a></button></div>

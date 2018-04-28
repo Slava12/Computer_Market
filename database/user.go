@@ -30,6 +30,15 @@ func DelUser(ID int) error {
 	return nil
 }
 
+// DelAllUsers удаляет всех пользователей из базы данных
+func DelAllUsers() error {
+	_, err := db.Exec("delete from users")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetUser возвращает данные о пользователе по его ID
 func GetUser(ID int) (User, error) {
 	row := db.QueryRow("select * from users where id=$1", ID)
