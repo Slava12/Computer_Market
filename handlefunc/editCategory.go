@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/Slava12/Computer_Market/database"
+	"github.com/Slava12/Computer_Market/errortemplate"
 	"github.com/Slava12/Computer_Market/logger"
 	"github.com/gorilla/mux"
 )
@@ -139,9 +140,15 @@ func addCategory(w http.ResponseWriter, r *http.Request) {
 		id, errAdd := database.NewCategory(result.ParentID, result.Name, result.Features)
 		if errAdd != nil {
 			logger.Warn(errAdd, "Не удалось добавить новую категорию!")
-		} else {
-			logger.Info("Добавление категории ", id, " прошло успешно.")
+			message := errortemplate.GenerateMessage(errAdd)
+			errorMessage := errortemplate.Error{Message: message, Link: "/add_category"}
+			err := tpl.ExecuteTemplate(w, "error.html", errorMessage)
+			if err != nil {
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+			return
 		}
+		logger.Info("Добавление категории ", id, " прошло успешно.")
 		http.Redirect(w, r, "/edit/categories", 302)
 	}
 }

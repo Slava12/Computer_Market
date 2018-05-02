@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
-
 	"github.com/Slava12/Computer_Market/database"
+	"github.com/Slava12/Computer_Market/errortemplate"
 	"github.com/Slava12/Computer_Market/logger"
+	"github.com/gorilla/mux"
 )
 
 func features(w http.ResponseWriter, r *http.Request) {
@@ -77,9 +77,15 @@ func addFeature(w http.ResponseWriter, r *http.Request) {
 		id, errAdd := database.NewFeature(result.Name)
 		if errAdd != nil {
 			logger.Warn(errAdd, "Не удалось добавить новую характеристику!")
-		} else {
-			logger.Info("Добавление характеристики ", id, " прошло успешно.")
+			message := errortemplate.GenerateMessage(errAdd)
+			errorMessage := errortemplate.Error{Message: message, Link: "/add_feature"}
+			err := tpl.ExecuteTemplate(w, "error.html", errorMessage)
+			if err != nil {
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+			return
 		}
+		logger.Info("Добавление характеристики ", id, " прошло успешно.")
 		http.Redirect(w, r, "/edit/features", 302)
 	}
 }

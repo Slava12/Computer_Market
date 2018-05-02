@@ -5,6 +5,7 @@ import (
 	"text/template"
 
 	"github.com/Slava12/Computer_Market/config"
+	"github.com/Slava12/Computer_Market/database"
 	"github.com/gorilla/mux"
 )
 
@@ -19,6 +20,7 @@ func InitHTTP(configFile config.Config) {
 
 	r := mux.NewRouter()
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
+	r.PathPrefix("/pictures/").Handler(http.StripPrefix("/pictures/", http.FileServer(http.Dir("./pictures/"))))
 
 	r.HandleFunc("/index", index)
 	r.HandleFunc("/login", login)
@@ -63,7 +65,14 @@ func InitHTTP(configFile config.Config) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	menu(w, r)
+	if r.Method == "GET" {
+		units, _ := database.GetAllUnits()
+		menu(w, r)
+		err := tpl.ExecuteTemplate(w, "index.html", units)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+	}
 }
 
 func menu(w http.ResponseWriter, r *http.Request) {

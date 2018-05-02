@@ -25,10 +25,10 @@ function SetFeatures() {
         var noteName  = elem.firstElementChild;
         var noteValue  = elem.lastElementChild;
         if (i == n - 1) {
-            features.value += noteName.innerHTML + " " + noteValue.value;
+            features.value += noteName.innerHTML + "_" + noteValue.value;
         }
         else {
-            features.value += noteName.innerHTML + " " + noteValue.value + ";";
+            features.value += noteName.innerHTML + "_" + noteValue.value + ";";
         }
     }
     SetNumberOfPictures();
