@@ -77,6 +77,40 @@ func GetUnit(ID int) (Unit, error) {
 	return unit, nil
 }
 
+// GetUnitsByCategoryID возвращает данные обо всех товарах
+func GetUnitsByCategoryID(id int) ([]Unit, error) {
+	rows, err := db.Query("select * from units where category_id=$1 order by id asc", id)
+	if err != nil {
+		return []Unit{}, err
+	}
+	units := []Unit{}
+	unit := Unit{}
+	features := []string{}
+	feature := ""
+	pictures := []string{}
+	picture := ""
+	for rows.Next() {
+		err = rows.Scan(&unit.ID, &unit.Name, &unit.CategoryID, &unit.Quantity, &unit.Price, &unit.Discount, &feature, &picture)
+		if err != nil {
+			return []Unit{}, err
+		}
+		features = append(features, feature)
+		pictures = append(pictures, picture)
+		units = append(units, unit)
+	}
+	for i := 0; i < len(units); i++ {
+		errU := json.Unmarshal([]byte(features[i]), &units[i].Features)
+		if errU != nil {
+			return []Unit{}, err
+		}
+		errU = json.Unmarshal([]byte(pictures[i]), &units[i].Pictures)
+		if errU != nil {
+			return []Unit{}, err
+		}
+	}
+	return units, nil
+}
+
 // GetAllUnits возвращает данные обо всех товарах
 func GetAllUnits() ([]Unit, error) {
 	rows, err := db.Query("select * from units order by id asc")

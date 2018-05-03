@@ -1,0 +1,12 @@
+<head>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/show_style.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/common_style.css">
+</head>
+{{range .}}
+<div class="unit">
+	<div class="picture"><img src="../../{{.Picture}}"></div>
+	<div class="name">{{.Name}}</div>
+	<div class="price">{{.Price}} руб.</div>
+	<div class="button"><a href="{{.Link}}">{{.Text}}</a></button></div>
+</div>
+{{end}}

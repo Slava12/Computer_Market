@@ -1,0 +1,41 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.unit {
+	height: 110px;
+	width: 900px;
+	background-color: white;
+	border-radius: 3px;
+	font-family: "Roboto",sans-serif;
+	margin: 10px auto;
+}
+
+.unit div {
+	display: inline-block;
+}
+
+.picture {
+}
+
+.unit img {
+	height: 100px;
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+.name {
+	padding-left: 40px;
+	vertical-align: 45px;
+	font-size: 16pt;
+}
+
+.price {
+	padding-left: 40px;
+	vertical-align: 40px;
+	font-size: 22pt;
+	font-weight: bold;
+}
+
+.button {
+	margin-left: 40px;
+	vertical-align: 50px;
+}

@@ -57,6 +57,8 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/delete_unit", delUnit)
 	r.HandleFunc("/delete_all_units", delAllUnits)
 
+	r.HandleFunc("/categories/processors", showProcessors)
+
 	port := configFile.HTTP.Port
 
 	filesFolder = configFile.Files.Folder
