@@ -4,9 +4,9 @@
 </head>
 {{range .}}
 <div class="unit">
-	<div class="picture"><img src="../../{{.Picture}}"></div>
-	<div class="name">{{.Name}}</div>
-	<div class="price">{{.Price}} руб.</div>
+	<div><img src="../../{{.Picture}}"></div>
+	<div class="name"><a href="{{.LinkUnit}}">{{.Name}}</a></div>
 	<div class="button"><a href="{{.Link}}">{{.Text}}</a></button></div>
+	<div class="price">{{.Price}} руб.</div>
 </div>
 {{end}}

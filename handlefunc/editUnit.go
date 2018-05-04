@@ -52,18 +52,34 @@ func showUnit(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUnit(w http.ResponseWriter, r *http.Request) {
+	/*vars := mux.Vars(r)
+	unitIDstring := vars["id"]
+	unitID, errString := strconv.Atoi(unitIDstring)
+	if errString != nil {
+		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+	}*/
+	unitID, errString := strconv.Atoi(r.FormValue("id"))
+	if errString != nil {
+		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+	}
+	unit, err := database.GetUnit(unitID)
+	if err != nil {
+		logger.Warn(err, "Не удалось получить запись о товаре ", unitID, "!")
+	} else {
+		logger.Info("Данные о товаре ", unitID, " получены успешно.")
+	}
 	if r.Method == "POST" {
-		result := database.Unit{}
-		result.Name = r.FormValue("name")
-		result.CategoryID, _ = strconv.Atoi(r.FormValue("categoryID"))
-		result.Quantity, _ = strconv.Atoi(r.FormValue("quantity"))
-		result.Price, _ = strconv.Atoi(r.FormValue("price"))
-		result.Discount, _ = strconv.Atoi(r.FormValue("discount"))
-		err := database.UpdateUnit(result.ID, result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
+		//result := database.Unit{}
+		unit.Name = r.FormValue("name")
+		//result.CategoryID, _ = strconv.Atoi(r.FormValue("categoryID"))
+		unit.Quantity, _ = strconv.Atoi(r.FormValue("quantity"))
+		unit.Price, _ = strconv.Atoi(r.FormValue("price"))
+		unit.Discount, _ = strconv.Atoi(r.FormValue("discount"))
+		err := database.UpdateUnit(unit.ID, unit.Name, unit.CategoryID, unit.Quantity, unit.Price, unit.Discount, unit.Features, unit.Pictures)
 		if err != nil {
-			logger.Warn(err, "Не удалось обновить товар ", result.ID, "!")
+			logger.Warn(err, "Не удалось обновить товар ", unit.ID, "!")
 		} else {
-			logger.Info("Товар ", result.ID, " обновлён успешно.")
+			logger.Info("Товар ", unit.ID, " обновлён успешно.")
 		}
 		http.Redirect(w, r, "/edit/units", 302)
 	}
