@@ -1,15 +1,16 @@
 <head>
 	<title>Авторизация</title>
 	<link rel="stylesheet" type="text/css" href="../../assets/css/login_style.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/common_style.css">
 	<script src="../../assets/js/login.js"></script>
 </head>
 <body>
 <div class="login-page">
   <div class="form">
-    <form class="login-form">
-      <input type="text" placeholder="Логин"/>
-      <input type="password" placeholder="Пароль"/>
-      <button>Войти</button>
+    <form class="login-form" action="/login" method="post">
+      <input type="text" class="field" name="login" placeholder="E-mail"/>
+      <input type="password" class="field" name="password" placeholder="Пароль"/>
+      <input type="submit" class="button" value="Войти">
       <p class="message">Не зарегестрированы? <a href="/create_account">Создать аккаунт</a></p>
     </form>
   </div>

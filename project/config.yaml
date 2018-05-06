@@ -3,7 +3,7 @@ http:
 database:
     driver: postgres
     user: postgres
-    password: Vbhfrk_)!
+    password: postgres
     dbname: market
     host: localhost
     port: 5432
@@ -13,3 +13,7 @@ logs:
     name: logs.txt
 files:
     folder: pictures/
+post:
+    server: smtp.yandex.ru:465
+    user: user@yandex.ru
+    password: password

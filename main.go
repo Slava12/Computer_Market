@@ -6,6 +6,7 @@ import (
 	"github.com/Slava12/Computer_Market/files"
 	"github.com/Slava12/Computer_Market/handlefunc"
 	"github.com/Slava12/Computer_Market/logger"
+	"github.com/Slava12/Computer_Market/post"
 )
 
 func main() {
@@ -29,6 +30,8 @@ func main() {
 
 	folder := configFile.Files.Folder
 	files.CreateDirectory(folder)
+
+	post.Init(configFile)
 
 	handlefunc.InitHTTP(configFile)
 

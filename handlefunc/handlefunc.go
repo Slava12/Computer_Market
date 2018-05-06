@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"text/template"
 
+	"github.com/Slava12/Computer_Market/post"
+
 	"github.com/Slava12/Computer_Market/config"
 	"github.com/Slava12/Computer_Market/database"
 	"github.com/gorilla/mux"
@@ -123,6 +125,10 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
+	}
+	if r.Method == "POST" {
+		post.SendMail("slavanosov@yandex.ru", "Подтверждение регистрации на сайте интернет-магазина", "Перейдите по ссылке, чтобы активировать учётную запись: http://78.106.252.55:8080/index")
+		http.Redirect(w, r, "/index", 302)
 	}
 }
 

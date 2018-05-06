@@ -7,3 +7,4 @@ Computer_Market
 /project/.idea/*
 /project/logs/*
 /project/pictures/*
+/project/conf.yaml

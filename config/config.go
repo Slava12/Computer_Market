@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"io/ioutil"
 
 	"gopkg.in/yaml.v2"
@@ -12,6 +13,7 @@ type Config struct {
 	Database Database `yaml:"database"`
 	Logs     Logs     `yaml:"logs"`
 	Files    Files    `yaml:"files"`
+	Post     Post     `yaml:"post"`
 }
 
 // HTTP содержит данные конфига, связанные с протоколом HTTP
@@ -41,15 +43,21 @@ type Files struct {
 	Folder string `yaml:"folder"`
 }
 
+// Post содержит данные конфига, связанные с отправкой почты
+type Post struct {
+	Server   string `yaml:"server"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+}
+
 // Parse обрабатывает файл конфигурации
 func Parse() (Config, error) {
 	config := Config{}
 
-	//configurationPath := flag.String("path", "", "Путь до файла конфигурации.")
-	configurationPath := "config.yaml" // убрать при работе
-	//flag.Parse()
+	configurationPath := flag.String("path", "", "Путь до файла конфигурации.")
+	flag.Parse()
 
-	bytesFile, errorReadFile := ioutil.ReadFile(configurationPath)
+	bytesFile, errorReadFile := ioutil.ReadFile(*configurationPath)
 	if errorReadFile != nil {
 		return config, errorReadFile
 	}
