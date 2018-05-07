@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+/*@import url(https://fonts.googleapis.com/css?family=Roboto:300);*/
 
 .unit {
 	height: 110px;
@@ -40,7 +40,7 @@
 	margin-top: 38px;
 }
 
-.button {
+.buttonA {
 	margin-left: 10px;
 	vertical-align: 50px;
 	float: right;

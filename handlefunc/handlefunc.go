@@ -5,10 +5,9 @@ import (
 	"strconv"
 	"text/template"
 
-	"github.com/Slava12/Computer_Market/post"
-
 	"github.com/Slava12/Computer_Market/config"
 	"github.com/Slava12/Computer_Market/database"
+	"github.com/Slava12/Computer_Market/logger"
 	"github.com/gorilla/mux"
 )
 
@@ -28,6 +27,7 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/index", index)
 	r.HandleFunc("/login", login)
 	r.HandleFunc("/create_account", createAccount)
+	r.HandleFunc("/logout", logout)
 	r.HandleFunc("/profile", profile)
 
 	r.HandleFunc("/edit", edit)
@@ -91,8 +91,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func menu(w http.ResponseWriter, r *http.Request) {
-	isLogged := false
-	name := "Святослав"
+	session, _ := store.Get(r, "cookie-name")
+	isLogged, _ := session.Values["authenticated"].(bool)
+	name, _ := session.Values["name"].(string)
 	data := struct {
 		IsLogged bool
 		Name     string
@@ -108,34 +109,17 @@ func menu(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "login.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
-	}
-}
-
-func createAccount(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "create_account.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
-	}
-	if r.Method == "POST" {
-		post.SendMail("slavanosov@yandex.ru", "Подтверждение регистрации на сайте интернет-магазина", "Перейдите по ссылке, чтобы активировать учётную запись: http://78.106.252.55:8080/index")
-		http.Redirect(w, r, "/index", 302)
-	}
-}
-
 func profile(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "cookie-name")
+	login, _ := session.Values["login"].(string)
+	user, err := database.GetUserByEmail(login)
+	if err != nil {
+		logger.Warn(err, "Не удалось получить информацию о пользователе!")
+		user = database.User{}
+	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "profile.html", nil)
+		err := tpl.ExecuteTemplate(w, "profile.html", user)
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
@@ -171,14 +155,24 @@ type Data struct {
 }
 
 func makeData(categoryName string, categoryLink string, actionLink string, actionText string) []Data {
-	categories, _ := database.GetAllCategories()
+	categories, err := database.GetAllCategories()
+	if err != nil {
+		logger.Warn(err, "Не удалось загрузить список категорий!")
+	} else {
+		logger.Info("Список категорий получен успешно.")
+	}
 	categoryID := 0
 	for i := 0; i < len(categories); i++ {
 		if categories[i].Name == categoryName {
 			categoryID = categories[i].ID
 		}
 	}
-	units, _ := database.GetUnitsByCategoryID(categoryID)
+	units, err := database.GetUnitsByCategoryID(categoryID)
+	if err != nil {
+		logger.Warn(err, "Не удалось загрузить список товаров!")
+	} else {
+		logger.Info("Список товаров получен успешно.")
+	}
 
 	data := make([]Data, len(units))
 	for i := 0; i < len(units); i++ {

@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+/*@import url(https://fonts.googleapis.com/css?family=Roboto:300);*/
 
 body {
   margin: 0;
@@ -9,7 +9,6 @@ ul.menu-th {
   list-style: none; /*убираем маркеры списка*/
   margin: 0; /*убираем отступы*/
   padding-left: 0; /*убираем отступы*/
-  margin-top: 0px; /*делаем отступ сверху*/
   background: #8ac758; /*добавляем фон всему меню*/
   height: 50px; /*задаем высоту*/
   }
@@ -54,5 +53,9 @@ ul.menu-th {
 .right {
   position: absolute;
   right: 0;
+  min-width: 150px;
   /*border-left: 1px solid #677B27;*/
+}
+.right li {
+  width: 100%;
 }

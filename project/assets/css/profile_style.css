@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+/*@import url(https://fonts.googleapis.com/css?family=Roboto:300);*/
 .elem {
 
 } 
@@ -7,7 +7,7 @@
 	text-align: center;
 	font-family: "Roboto",sans-serif;
 }
-.button {
+/*.button {
 	background: #8ac858;
 	border: 0px;
 	border-radius: 3px;
@@ -16,7 +16,7 @@
 }
 .button:hover {
 	background: #6fb03a;
-}
+}*/
 .header {
 	font-size: 25px;
 }

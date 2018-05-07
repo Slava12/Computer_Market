@@ -52,12 +52,16 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 		result := database.User{}
 		result.ID, _ = strconv.Atoi(r.FormValue("id"))
 		result.AccessLevel, _ = strconv.Atoi(r.FormValue("accessLevel"))
-		result.Login = r.FormValue("login")
-		result.Password = r.FormValue("password")
+		if r.FormValue("confirmed") != "" {
+			result.Confirmed = true
+		} else {
+			result.Confirmed = false
+		}
 		result.Email = r.FormValue("email")
+		result.Password = r.FormValue("password")
 		result.FirstName = r.FormValue("firstName")
 		result.SecondName = r.FormValue("secondName")
-		err := database.UpdateUser(result.ID, result.AccessLevel, result.Login, result.Password, result.Email, result.FirstName, result.SecondName)
+		err := database.UpdateUser(result.ID, result.AccessLevel, result.Confirmed, result.Email, result.Password, result.FirstName, result.SecondName)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить запись пользователя ", result.ID, "!")
 		} else {
@@ -78,12 +82,16 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		result := database.User{}
 		result.AccessLevel, _ = strconv.Atoi(r.FormValue("accessLevel"))
-		result.Login = r.FormValue("login")
-		result.Password = r.FormValue("password")
+		if r.FormValue("confirmed") != "" {
+			result.Confirmed = true
+		} else {
+			result.Confirmed = false
+		}
 		result.Email = r.FormValue("email")
+		result.Password = r.FormValue("password")
 		result.FirstName = r.FormValue("firstName")
 		result.SecondName = r.FormValue("secondName")
-		id, err := database.NewUser(result.AccessLevel, result.Login, result.Password, result.Email, result.FirstName, result.SecondName)
+		id, err := database.NewUser(result.AccessLevel, result.Confirmed, result.Email, result.Password, result.FirstName, result.SecondName)
 		if err != nil {
 			logger.Warn(err, "Не удалось добавить нового пользователя!")
 		} else {

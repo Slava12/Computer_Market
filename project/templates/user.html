@@ -13,16 +13,20 @@
 			<textarea name="accessLevel">{{.AccessLevel}}</textarea>
 		</div>
 		<div class=elem">
-			<div>Логин</div>
-			<textarea name="login">{{.Login}}</textarea>
-		</div>
-		<div class=elem">
-			<div>Пароль</div>
-			<textarea name="password">{{.Password}}</textarea>
+			<div>Подтверждён</div>
+			{{if .Confirmed}}
+			<input type="checkbox" name="confirmed" checked/>
+			{{else}}
+			<input type="checkbox" name="confirmed">
+			{{end}}
 		</div>
 		<div class=elem">
 			<div>E-mail</div>
 			<textarea name="email">{{.Email}}</textarea>
+		</div>
+		<div class=elem">
+			<div>Пароль</div>
+			<textarea name="password">{{.Password}}</textarea>
 		</div>
 		<div class=elem">
 			<div>Имя</div>

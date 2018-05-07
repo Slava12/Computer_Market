@@ -4,17 +4,17 @@ package database
 type User struct {
 	ID          int
 	AccessLevel int
-	Login       string
-	Password    string
+	Confirmed   bool
 	Email       string
+	Password    string
 	FirstName   string
 	SecondName  string
 }
 
 // NewUser добавляет нового пользователя в базу данных
-func NewUser(accessLevel int, login string, password string, email string, firstName string, secondName string) (id int, err error) {
-	err = db.QueryRow("insert into users (access_level, login, password, email, first_name, second_name) values ($1, $2, $3, $4, $5, $6) returning id",
-		accessLevel, login, password, email, firstName, secondName).Scan(&id)
+func NewUser(accessLevel int, confirmed bool, email string, password string, firstName string, secondName string) (id int, err error) {
+	err = db.QueryRow("insert into users (access_level, confirmed, email, password, first_name, second_name) values ($1, $2, $3, $4, $5, $6) returning id",
+		accessLevel, confirmed, email, password, firstName, secondName).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -43,7 +43,18 @@ func DelAllUsers() error {
 func GetUser(ID int) (User, error) {
 	row := db.QueryRow("select * from users where id=$1", ID)
 	user := User{}
-	err := row.Scan(&user.ID, &user.AccessLevel, &user.Login, &user.Password, &user.Email, &user.FirstName, &user.SecondName)
+	err := row.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName)
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
+}
+
+// GetUserByEmail возвращает данные о пользователе по его e-mail
+func GetUserByEmail(email string) (User, error) {
+	row := db.QueryRow("select * from users where email=$1", email)
+	user := User{}
+	err := row.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName)
 	if err != nil {
 		return User{}, err
 	}
@@ -59,7 +70,7 @@ func GetAllUsers() ([]User, error) {
 	users := []User{}
 	user := User{}
 	for rows.Next() {
-		err = rows.Scan(&user.ID, &user.AccessLevel, &user.Login, &user.Password, &user.Email, &user.FirstName, &user.SecondName)
+		err = rows.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName)
 		if err != nil {
 			return []User{}, err
 		}
@@ -77,18 +88,9 @@ func UpdateUserAccessLevel(ID int, accessLevel int) error {
 	return nil
 }
 
-// UpdateUserLogin обновляет значение логина пользователя
-func UpdateUserLogin(ID int, login string) error {
-	_, err := db.Exec("update users set login = $1 where id = $2", login, ID)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// UpdateUserPassword обновляет значение пароля пользователя
-func UpdateUserPassword(ID int, password string) error {
-	_, err := db.Exec("update users set password = $1 where id = $2", password, ID)
+// UpdateUserConfirmed обновляет значение логина пользователя
+func UpdateUserConfirmed(ID int, confirmed bool) error {
+	_, err := db.Exec("update users set confirmed = $1 where id = $2", confirmed, ID)
 	if err != nil {
 		return err
 	}
@@ -98,6 +100,15 @@ func UpdateUserPassword(ID int, password string) error {
 // UpdateUserEmail обновляет значение адреса почты пользователя
 func UpdateUserEmail(ID int, email string) error {
 	_, err := db.Exec("update users set email = $1 where id = $2", email, ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateUserPassword обновляет значение пароля пользователя
+func UpdateUserPassword(ID int, password string) error {
+	_, err := db.Exec("update users set password = $1 where id = $2", password, ID)
 	if err != nil {
 		return err
 	}
@@ -123,9 +134,9 @@ func UpdateUserSecondName(ID int, secondName string) error {
 }
 
 // UpdateUser обновляет значения полей пользователя
-func UpdateUser(ID int, accessLevel int, login string, password string, email string, firstName string, secondName string) error {
-	_, err := db.Exec("update users set access_level = $1, login = $2, password = $3, email = $4, first_name = $5, second_name = $6 where id = $7",
-		accessLevel, login, password, email, firstName, secondName, ID)
+func UpdateUser(ID int, accessLevel int, confirmed bool, email string, password string, firstName string, secondName string) error {
+	_, err := db.Exec("update users set access_level = $1, confirmed = $2, email = $3, password = $4, first_name = $5, second_name = $6 where id = $7",
+		accessLevel, confirmed, email, password, firstName, secondName, ID)
 	if err != nil {
 		return err
 	}
