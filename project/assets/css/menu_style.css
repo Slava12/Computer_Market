@@ -25,6 +25,9 @@ ul.menu-th {
   -o-transition: all 0.3s 0.01s ease;
   -webkit-transition: all 0.3s 0.01s ease;
 }
+.name {
+  text-align: center;
+}
 .menu-th a:hover {
   background: #6fb03a; /*добавляем эффект при наведении*/
 }

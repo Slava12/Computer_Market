@@ -8,9 +8,9 @@
 <div class="login-page">
   <div class="form">
     <form class="register-form" action="/create_account" method="post">
-      <input type="text" class="field" name="name" placeholder="Имя"/>
-      <input type="text" class="field" name="login" placeholder="E-mail"/>
-      <input type="password" class="field" name="password" placeholder="Пароль"/>
+      <input type="text" required class="field" name="name" placeholder="Имя"/>
+      <input type="email" required class="field" name="login" placeholder="E-mail"/>
+      <input type="password" required class="field" name="password" placeholder="Пароль"/>
       <input type="submit" class="button" value="Создать аккаунт">
       <p class="message">Уже зарегестрированы? <a href="/login">Войти</a></p>
     </form>

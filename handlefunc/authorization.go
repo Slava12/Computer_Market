@@ -58,7 +58,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 		}
 		session.Values["authenticated"] = true
 		session.Values["login"] = user.Email
-		session.Values["name"] = user.FirstName
 		session.Save(r, w)
 		logger.Info("Пользователь ", user.Email, " успешно авторизовался.")
 		http.Redirect(w, r, "/index", 302)
@@ -94,13 +93,16 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 		}
 		logger.Info("Добавление пользователя", id, "прошло успешно.")
 
-		number := getRandomNumber(100000, 999999)
-		body := "Ваш код активации: " + strconv.Itoa(number)
-		post.SendMail("slavanosov@yandex.ru", "Подтверждение регистрации на сайте интернет-магазина", body)
+		code := getRandomNumber(100000, 999999)
+		codeID, err := database.NewCode(code, id)
+		if err != nil {
+			logger.Warn(err, "Не удалось создать код подтверждения!")
+		}
+		logger.Info("Код подтверждения ", codeID, " успешно создан.")
+		body := "Ваш код активации: " + strconv.Itoa(code)
+		post.SendMail(email, "Подтверждение регистрации на сайте интернет-магазина", body)
 		session.Values["authenticated"] = true
 		session.Values["login"] = email
-		session.Values["name"] = name
-		session.Values["code"] = number
 		session.Save(r, w)
 		http.Redirect(w, r, "/confirm_account", 302)
 	}
@@ -126,11 +128,14 @@ func confirmAccount(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "POST" {
 
-		inputCode, _ := strconv.Atoi(r.FormValue("code"))
+		inputCode := r.FormValue("code")
 
-		code, _ := session.Values["code"].(int)
-
-		if code != inputCode {
+		code, errGet := database.GetCodeByUserID(user.ID)
+		if errGet != nil {
+			logger.Warn(errGet, "Не удалось получить данные о коде подтверждения!")
+		}
+		logger.Info("Данные о коде подтверждения получены успешно.")
+		if strconv.Itoa(code.Code) != inputCode {
 			message := "Введён неверный код!"
 			logger.Info(message)
 			errorMessage := errortemplate.Error{Message: message, Link: "/confirm_account"}

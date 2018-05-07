@@ -5,20 +5,19 @@
 	<script src="../../assets/js/script.js"></script>
 </head>
 <body>
+	<div class="header">Ваши данные</div>
 	<div class="info">
-		<div class="header">Ваши данные</div>
-		<div class="elem">
-			<div>Имя</div>
-			<div>{{.FirstName}}</div>
+		<div class="elemP">
+			<div class="fieldName">Имя</div>
+			<div class="field">{{.FirstName}}</div>
 		</div>
-		<div class="elem">
-			<div>Фамилия</div>
-			<div>{{.SecondName}}</div>
+		<div class="elemP">
+			<div class="fieldName">Фамилия</div>
+			<div class="field">{{.SecondName}}</div>
 		</div>
-		<div class="elem">
-			<div>Email</div>
-			<div>{{.Email}}</div>
+		<div class="elemP">
+			<div class="fieldName">Email</div>
+			<div class="field">{{.Email}}</div>
 		</div>
-		<input type="button" class="button" name="change" value="Изменить данные">
 	</div>
-	<div ></div>
+	<div class="buttonA"><a href="/profile/change">Изменить данные</a></div>

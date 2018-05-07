@@ -1,0 +1,18 @@
+body {
+    font-family: "Roboto", sans-serif;
+    background-color: #ededed;
+}
+
+.header {
+    font-size: 20pt;
+    margin: 10vh auto;
+    text-align: center;
+}
+
+.buttonA {
+    font-size: 14pt;
+    margin: 0 auto;
+    width: 150px;
+    text-align: center;
+    padding-top: 6px;
+}

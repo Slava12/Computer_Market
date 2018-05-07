@@ -8,6 +8,7 @@ import (
 
 	"github.com/Slava12/Computer_Market/config"
 	"github.com/Slava12/Computer_Market/database"
+	"github.com/Slava12/Computer_Market/errortemplate"
 	"github.com/Slava12/Computer_Market/logger"
 	"github.com/gorilla/mux"
 )
@@ -26,11 +27,20 @@ func InitHTTP(configFile config.Config) {
 	r.PathPrefix("/pictures/").Handler(http.StripPrefix("/pictures/", http.FileServer(http.Dir("./pictures/"))))
 
 	r.HandleFunc("/index", index)
+
+	r.HandleFunc("/search", search)
+
 	r.HandleFunc("/login", login)
 	r.HandleFunc("/create_account", createAccount)
 	r.HandleFunc("/confirm_account", confirmAccount)
 	r.HandleFunc("/logout", logout)
+
 	r.HandleFunc("/profile", profile)
+	r.HandleFunc("/profile/change", changeProfile)
+	r.HandleFunc("/basket", basket)
+	r.HandleFunc("/orders", orders)
+
+	r.HandleFunc("/add_basket/{id}", addBasket)
 
 	r.HandleFunc("/edit", edit)
 
@@ -65,9 +75,16 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/categories", showCategories)
 
 	r.HandleFunc("/categories/processors", showProcessors)
+	r.HandleFunc("/categories/processors/{id}", showProcessor)
+
 	r.HandleFunc("/categories/motherboards", showMotherboards)
+	r.HandleFunc("/categories/motherboards/{id}", showMotherboard)
+
 	r.HandleFunc("/categories/videocards", showVideocards)
+	r.HandleFunc("/categories/videocards/{id}", showVideocard)
+
 	r.HandleFunc("/categories/rams", showRams)
+	r.HandleFunc("/categories/rams/{id}", showRam)
 
 	r.HandleFunc("/constructor", showConstructor)
 
@@ -79,10 +96,10 @@ func InitHTTP(configFile config.Config) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	processors := makeData("Процессор", "processors", "add_busket", "Добавить в корзину")
-	motherboards := makeData("Материнская плата", "motherboards", "add_busket", "Добавить в корзину")
-	videocards := makeData("Видеокарта", "videocards", "add_busket", "Добавить в корзину")
-	rams := makeData("Оперативная память", "rams", "add_busket", "Добавить в корзину")
+	processors := makeData("Процессор", "processors", "add_basket", "Добавить в корзину")
+	motherboards := makeData("Материнская плата", "motherboards", "add_basket", "Добавить в корзину")
+	videocards := makeData("Видеокарта", "videocards", "add_basket", "Добавить в корзину")
+	rams := makeData("Оперативная память", "rams", "add_basket", "Добавить в корзину")
 	if r.Method == "GET" {
 		menu(w, r)
 		execute(w, "show_units.html", processors)
@@ -92,10 +109,15 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func search(w http.ResponseWriter, r *http.Request) {
+	message := "Приносим свои извинения, работа над страницей ещё не завершена."
+	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
+	execute(w, "error.html", errorMessage)
+}
+
 func menu(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 	isLogged, _ := session.Values["authenticated"].(bool)
-	name, _ := session.Values["name"].(string)
 	email, _ := session.Values["login"].(string)
 	user, _ := database.GetUserByEmail(email)
 	accessLevel := false
@@ -114,33 +136,11 @@ func menu(w http.ResponseWriter, r *http.Request) {
 		AccessLevel bool
 	}{
 		IsLogged:    isLogged,
-		Name:        name,
+		Name:        user.FirstName,
 		AccessLevel: accessLevel,
 	}
 	if r.Method == "GET" {
 		err := tpl.ExecuteTemplate(w, "menu.html", data)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
-	}
-}
-
-func profile(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "cookie-name")
-	login, _ := session.Values["login"].(string)
-	user, err := database.GetUserByEmail(login)
-	if err != nil {
-		logger.Warn(err, "Не удалось получить информацию о пользователе!")
-		http.Redirect(w, r, "/index", 302)
-		return
-	}
-	if user.Confirmed == false {
-		http.Redirect(w, r, "/confirm_account", 302)
-		return
-	}
-	if r.Method == "GET" {
-		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "profile.html", user)
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
@@ -154,7 +154,6 @@ func showCategories(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//-------------------------------------edit------------------------------------------//
 func edit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		menu(w, r)
@@ -164,6 +163,8 @@ func edit(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+//---------------------------------------------------------------------------//
 
 // Data хранит данные об товаре для показа
 type Data struct {

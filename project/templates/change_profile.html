@@ -1,0 +1,24 @@
+<head>
+    <title>Редактирование профиля</title>
+    <link rel="stylesheet" type="text/css" href="../../assets/css/profile_style.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/common_style.css">
+</head>
+<div class="header">Редактирование профиля</div>
+<div class="form">
+    <form action="/profile/change" method="post">
+        <div class="elem">
+            <div>Имя</div>
+            <div><input type="text" class="fieldC" required name="firstName" value="{{.FirstName}}"/></div>
+        </div>
+        <div class="elem">
+            <div>Фамилия</div>
+            <div><input type="text" class="fieldC" required name="secondName" value="{{.SecondName}}"/></div>
+        </div>
+        <div class="elem">
+            <div>Пароль</div>
+            <div><input type="password" class="fieldC" required name="password" value="{{.Password}}"/></div>
+        </div>
+        <div><input type="submit" class="button" value="Изменить"></div>
+    </form>
+</div>
+<div class="buttonA"><a href="/profile">Назад к профилю</a></div>
