@@ -33,6 +33,8 @@ func main() {
 
 	post.Init(configFile)
 
+	handlefunc.InitRandomizer()
+
 	handlefunc.InitHTTP(configFile)
 
 	//user := database.User{0, 0, "lol", "123", "", ""}

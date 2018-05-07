@@ -3,6 +3,7 @@ package handlefunc
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/Slava12/Computer_Market/config"
@@ -27,6 +28,7 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/index", index)
 	r.HandleFunc("/login", login)
 	r.HandleFunc("/create_account", createAccount)
+	r.HandleFunc("/confirm_account", confirmAccount)
 	r.HandleFunc("/logout", logout)
 	r.HandleFunc("/profile", profile)
 
@@ -94,12 +96,26 @@ func menu(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 	isLogged, _ := session.Values["authenticated"].(bool)
 	name, _ := session.Values["name"].(string)
+	email, _ := session.Values["login"].(string)
+	user, _ := database.GetUserByEmail(email)
+	accessLevel := false
+	if user.AccessLevel == 10 && isLogged {
+		accessLevel = true
+	} else {
+		page := r.URL.String()
+		if strings.Contains(page, "edit") {
+			http.Redirect(w, r, "/index", 302)
+			return
+		}
+	}
 	data := struct {
-		IsLogged bool
-		Name     string
+		IsLogged    bool
+		Name        string
+		AccessLevel bool
 	}{
-		IsLogged: isLogged,
-		Name:     name,
+		IsLogged:    isLogged,
+		Name:        name,
+		AccessLevel: accessLevel,
 	}
 	if r.Method == "GET" {
 		err := tpl.ExecuteTemplate(w, "menu.html", data)
@@ -115,7 +131,12 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	user, err := database.GetUserByEmail(login)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить информацию о пользователе!")
-		user = database.User{}
+		http.Redirect(w, r, "/index", 302)
+		return
+	}
+	if user.Confirmed == false {
+		http.Redirect(w, r, "/confirm_account", 302)
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -169,9 +190,9 @@ func makeData(categoryName string, categoryLink string, actionLink string, actio
 	}
 	units, err := database.GetUnitsByCategoryID(categoryID)
 	if err != nil {
-		logger.Warn(err, "Не удалось загрузить список товаров!")
+		logger.Warn(err, "Не удалось загрузить список товаров категории ", categoryName, "!")
 	} else {
-		logger.Info("Список товаров получен успешно.")
+		logger.Info("Список товаров категории ", categoryName, " получен успешно.")
 	}
 
 	data := make([]Data, len(units))

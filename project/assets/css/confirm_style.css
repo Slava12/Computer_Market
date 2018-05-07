@@ -1,0 +1,38 @@
+.header {
+    font-size: 20pt;
+    margin: 5vh auto;
+    text-align: center;
+}
+
+.form {
+    margin: 10vh auto;
+    background: white;
+    max-width: 360px;
+    padding: 45px;
+    text-align: center;
+    border-radius: 3px;
+    border: 1px solid #cccccc;
+}
+
+.field {
+    outline: 0;
+    background: #f2f2f2;
+    width: 170px;
+    border: 0;
+    margin: 0 0 5vh;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 3px;
+}
+
+.buttonA {
+    margin: 0 auto;
+    width: 150px;
+    text-align: center;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    background-color: #ededed;
+}

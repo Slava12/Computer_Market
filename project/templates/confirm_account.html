@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Подтверждение аккаунта</title>
+    <link rel="shortcut icon" href="../../assets/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/common_style.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/confirm_style.css">
+</head>
+<body>
+    <div class="header">Введите код, отправленный по адресу:</div>
+    <div class="header">{{.}}</div>
+        <div class="form">
+            <form class="confirm-form" action="/confirm_account" method="post">
+                <input type="text" class="field" name="code" placeholder="Код подтверждения"/>
+                <input type="submit" class="button">
+                <div class="buttonA"><a href="/index">На главную</a></div>
+            </form>
+        </div>
+</body>
+</html>

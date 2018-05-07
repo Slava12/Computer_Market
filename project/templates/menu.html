@@ -17,6 +17,7 @@
 		</li>
 		<li><a href="/constructor">Конструктор компьютера</a></li>
 		<li><a href="/search">Поиск по сайту</a></li>
+		{{if .AccessLevel}}
 		<li><a href="/edit">Редактирование записей</a>
 			<ul>
 				<li><a href="/edit/users">Пользователи</a></li>
@@ -26,6 +27,7 @@
 				<li><a href="/edit/features">Характеристики</a></li>
 			</ul>
 		</li>
+		{{end}}
 		{{if .IsLogged}}
 		<div class="right">
 			<li><a href="/profile">{{.Name}}</a>
