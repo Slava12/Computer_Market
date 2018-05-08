@@ -1,8 +1,16 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="../../assets/css/show_style.css">
 	<link rel="stylesheet" type="text/css" href="../../assets/css/common_style.css">
+	<script src="../../assets/js/script.js"></script>
 </head>
-{{range .}}
+{{if .ShowCategory}}
+<div class="unit">
+	<div class="nameCategory">{{.CategoryNames}}</div>
+	<div class="button" id="button{{.CategoryLink}}" onclick="ChangeButton(`{{.CategoryLink}}`)">Показать</div>
+</div>
+{{end}}
+<div id="{{.CategoryLink}}">
+{{range .Data}}
 <div class="unit">
 	<div><img src="../../{{.Picture}}"></div>
 	<div class="name"><a href="{{.LinkUnit}}">{{.Name}}</a></div>
@@ -10,3 +18,4 @@
 	<div class="price">{{.Price}} руб.</div>
 </div>
 {{end}}
+</div>

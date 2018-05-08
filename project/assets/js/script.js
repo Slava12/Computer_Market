@@ -53,3 +53,25 @@ function SetNumberOfPictures() {
     var pictures = document.getElementById("picturesNumber");
     pictures.value = imageCount;
 }
+
+
+function ChangeButton(categoryName) {
+    var str = "button" + categoryName;
+    var elem = document.getElementById(str);
+    var content = elem.innerHTML;
+    if (content == "Показать") {
+        document.getElementById(categoryName).style.display='block';
+        elem.innerHTML = "Скрыть";
+    }
+    else {
+        document.getElementById(categoryName).style.display='none';
+        elem.innerHTML = "Показать";
+    }
+}
+
+function HideUnits() {
+    document.getElementById("processors").style.display = "none";
+    document.getElementById("motherboards").style.display = "none";
+    document.getElementById("videocards").style.display = "none";
+    document.getElementById("rams").style.display = "none";
+}

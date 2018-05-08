@@ -7,7 +7,7 @@ import (
 )
 
 func showProcessors(w http.ResponseWriter, r *http.Request) {
-	data := makeData("Процессор", "processors", "add_basket", "Добавить в корзину")
+	data := makeData(false, "", "Процессор", "processors", "add_basket", "Добавить в корзину")
 	if r.Method == "GET" {
 		menu(w, r)
 		execute(w, "show_units.html", data)
@@ -15,7 +15,7 @@ func showProcessors(w http.ResponseWriter, r *http.Request) {
 }
 
 func showMotherboards(w http.ResponseWriter, r *http.Request) {
-	data := makeData("Материнская плата", "motherboards", "add_basket", "Добавить в корзину")
+	data := makeData(false, "", "Материнская плата", "motherboards", "add_basket", "Добавить в корзину")
 	if r.Method == "GET" {
 		menu(w, r)
 		execute(w, "show_units.html", data)
@@ -23,7 +23,7 @@ func showMotherboards(w http.ResponseWriter, r *http.Request) {
 }
 
 func showVideocards(w http.ResponseWriter, r *http.Request) {
-	data := makeData("Видеокарта", "videocards", "add_basket", "Добавить в корзину")
+	data := makeData(false, "", "Видеокарта", "videocards", "add_basket", "Добавить в корзину")
 	if r.Method == "GET" {
 		menu(w, r)
 		execute(w, "show_units.html", data)
@@ -31,7 +31,7 @@ func showVideocards(w http.ResponseWriter, r *http.Request) {
 }
 
 func showRams(w http.ResponseWriter, r *http.Request) {
-	data := makeData("Оперативная память", "rams", "add_basket", "Добавить в корзину")
+	data := makeData(false, "", "Оперативная память", "rams", "add_basket", "Добавить в корзину")
 	if r.Method == "GET" {
 		menu(w, r)
 		execute(w, "show_units.html", data)

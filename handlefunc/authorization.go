@@ -104,6 +104,7 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 		session.Values["authenticated"] = true
 		session.Values["login"] = email
 		session.Save(r, w)
+		logger.Info("Пользователь ", email, " успешно авторизовался.")
 		http.Redirect(w, r, "/confirm_account", 302)
 	}
 }

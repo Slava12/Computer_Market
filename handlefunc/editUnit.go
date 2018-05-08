@@ -38,7 +38,7 @@ func showUnit(w http.ResponseWriter, r *http.Request) {
 	}
 	unit, err := database.GetUnit(unitID)
 	if err != nil {
-		logger.Warn(err, "Не удалось получить запись о товаре ", unitID, "!")
+		logger.Warn(err, "Не удалось получить данные о товаре ", unitID, "!")
 	} else {
 		logger.Info("Данные о товаре ", unitID, " получены успешно.")
 	}
@@ -52,12 +52,6 @@ func showUnit(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUnit(w http.ResponseWriter, r *http.Request) {
-	/*vars := mux.Vars(r)
-	unitIDstring := vars["id"]
-	unitID, errString := strconv.Atoi(unitIDstring)
-	if errString != nil {
-		logger.Warn(errString, "Не удалось конвертировать строку в число!")
-	}*/
 	unitID, errString := strconv.Atoi(r.FormValue("id"))
 	if errString != nil {
 		logger.Warn(errString, "Не удалось конвертировать строку в число!")
@@ -69,9 +63,7 @@ func updateUnit(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Данные о товаре ", unitID, " получены успешно.")
 	}
 	if r.Method == "POST" {
-		//result := database.Unit{}
 		unit.Name = r.FormValue("name")
-		//result.CategoryID, _ = strconv.Atoi(r.FormValue("categoryID"))
 		unit.Quantity, _ = strconv.Atoi(r.FormValue("quantity"))
 		unit.Price, _ = strconv.Atoi(r.FormValue("price"))
 		unit.Discount, _ = strconv.Atoi(r.FormValue("discount"))

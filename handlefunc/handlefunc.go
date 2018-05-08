@@ -87,6 +87,10 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/categories/rams/{id}", showRam)
 
 	r.HandleFunc("/constructor", showConstructor)
+	r.HandleFunc("/add_constructor/{id}", addConstructor)
+	r.HandleFunc("/remove_constructor/{id}", removeConstructor)
+	r.HandleFunc("/constructor/clear", clearConstructor)
+	r.HandleFunc("/constructor/order", orderConstructor)
 
 	port := configFile.HTTP.Port
 
@@ -96,10 +100,10 @@ func InitHTTP(configFile config.Config) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	processors := makeData("Процессор", "processors", "add_basket", "Добавить в корзину")
-	motherboards := makeData("Материнская плата", "motherboards", "add_basket", "Добавить в корзину")
-	videocards := makeData("Видеокарта", "videocards", "add_basket", "Добавить в корзину")
-	rams := makeData("Оперативная память", "rams", "add_basket", "Добавить в корзину")
+	processors := makeData(false, "", "Процессор", "processors", "add_basket", "Добавить в корзину")
+	motherboards := makeData(false, "", "Материнская плата", "motherboards", "add_basket", "Добавить в корзину")
+	videocards := makeData(false, "", "Видеокарта", "videocards", "add_basket", "Добавить в корзину")
+	rams := makeData(false, "", "Оперативная память", "rams", "add_basket", "Добавить в корзину")
 	if r.Method == "GET" {
 		menu(w, r)
 		execute(w, "show_units.html", processors)
@@ -166,6 +170,14 @@ func edit(w http.ResponseWriter, r *http.Request) {
 
 //---------------------------------------------------------------------------//
 
+// DataFull хранит данные об товаре и категории для показа
+type DataFull struct {
+	ShowCategory  bool
+	CategoryNames string
+	CategoryLink  string
+	Data          []Data
+}
+
 // Data хранит данные об товаре для показа
 type Data struct {
 	Picture  string
@@ -176,13 +188,8 @@ type Data struct {
 	Text     string
 }
 
-func makeData(categoryName string, categoryLink string, actionLink string, actionText string) []Data {
-	categories, err := database.GetAllCategories()
-	if err != nil {
-		logger.Warn(err, "Не удалось загрузить список категорий!")
-	} else {
-		logger.Info("Список категорий получен успешно.")
-	}
+func makeData(showCategory bool, categoryNames string, categoryName string, categoryLink string, actionLink string, actionText string) DataFull {
+	categories, _ := database.GetAllCategories()
 	categoryID := 0
 	for i := 0; i < len(categories); i++ {
 		if categories[i].Name == categoryName {
@@ -198,6 +205,7 @@ func makeData(categoryName string, categoryLink string, actionLink string, actio
 
 	data := make([]Data, len(units))
 	for i := 0; i < len(units); i++ {
+
 		data[i].Picture = units[i].Pictures[0]
 		data[i].LinkUnit = "/categories/" + categoryLink + "/" + strconv.Itoa(units[i].ID)
 		data[i].Name = units[i].Name
@@ -205,7 +213,14 @@ func makeData(categoryName string, categoryLink string, actionLink string, actio
 		data[i].Link = "/" + actionLink + "/" + strconv.Itoa(units[i].ID)
 		data[i].Text = actionText
 	}
-	return data
+
+	dataFull := DataFull{}
+	dataFull.ShowCategory = showCategory
+	dataFull.CategoryNames = categoryNames
+	dataFull.CategoryLink = categoryLink
+	dataFull.Data = data
+
+	return dataFull
 }
 
 func execute(w http.ResponseWriter, templateName string, data interface{}) {
@@ -213,4 +228,33 @@ func execute(w http.ResponseWriter, templateName string, data interface{}) {
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
+}
+
+func makeSingleData(ID int, categoryLink string, actionLink string, actionText string) Data {
+	unit, err := database.GetUnit(ID)
+	if err != nil {
+		return Data{}
+	}
+
+	data := Data{}
+	data.Picture = unit.Pictures[0]
+	data.LinkUnit = "/categories/" + categoryLink + "/" + strconv.Itoa(unit.ID)
+	data.Name = unit.Name
+	data.Price = unit.Price
+	data.Link = "/" + actionLink + "/" + strconv.Itoa(unit.ID)
+	data.Text = actionText
+	return data
+}
+
+// NothingData хранит данные, если товар не указан
+type NothingData struct {
+	Picture string
+	Text    string
+}
+
+func makeNothingData(picture string, text string) NothingData {
+	data := NothingData{}
+	data.Picture = picture
+	data.Text = text
+	return data
 }
