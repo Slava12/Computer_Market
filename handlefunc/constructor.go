@@ -34,10 +34,10 @@ func showConstructor(w http.ResponseWriter, r *http.Request) {
 	videocardSelected := makeSingleData(videocard.ID, "videocards", "remove_constructor", "Убрать товар")
 	ramSelected := makeSingleData(ram.ID, "rams", "remove_constructor", "Убрать товар")
 
-	processors := makeData(true, "Процессоры", "Процессор", "processors", "add_constructor", "Выбрать товар")
-	motherboards := makeData(true, "Материнские платы", "Материнская плата", "motherboards", "add_constructor", "Выбрать товар")
-	videocards := makeData(true, "Видеокарты", "Видеокарта", "videocards", "add_constructor", "Выбрать товар")
-	rams := makeData(true, "Оперативная память", "Оперативная память", "rams", "add_constructor", "Выбрать товар")
+	processors := makeData(true, "Процессоры", "Процессор", "processors", "add_constructor", "Выбрать товар", r)
+	motherboards := makeData(true, "Материнские платы", "Материнская плата", "motherboards", "add_constructor", "Выбрать товар", r)
+	videocards := makeData(true, "Видеокарты", "Видеокарта", "videocards", "add_constructor", "Выбрать товар", r)
+	rams := makeData(true, "Оперативная память", "Оперативная память", "rams", "add_constructor", "Выбрать товар", r)
 	if r.Method == "GET" {
 		menu(w, r)
 		execute(w, "header.html", "Выбранная конфигурация")

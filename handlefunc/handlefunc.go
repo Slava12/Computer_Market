@@ -38,7 +38,7 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/profile", profile)
 	r.HandleFunc("/profile/change", changeProfile)
 	r.HandleFunc("/basket", basket)
-	r.HandleFunc("/orders", orders)
+	r.HandleFunc("/orders", showOrders)
 
 	r.HandleFunc("/add_basket/{id}", addBasket)
 
@@ -72,6 +72,8 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/delete_unit", delUnit)
 	r.HandleFunc("/delete_all_units", delAllUnits)
 
+	r.HandleFunc("/edit/orders", orders)
+
 	r.HandleFunc("/categories", showCategories)
 
 	r.HandleFunc("/categories/processors", showProcessors)
@@ -100,12 +102,13 @@ func InitHTTP(configFile config.Config) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	processors := makeData(false, "", "Процессор", "processors", "add_basket", "Добавить в корзину")
-	motherboards := makeData(false, "", "Материнская плата", "motherboards", "add_basket", "Добавить в корзину")
-	videocards := makeData(false, "", "Видеокарта", "videocards", "add_basket", "Добавить в корзину")
-	rams := makeData(false, "", "Оперативная память", "rams", "add_basket", "Добавить в корзину")
+	processors := makeData(false, "", "Процессор", "processors", "add_basket", "Добавить в корзину", r)
+	motherboards := makeData(false, "", "Материнская плата", "motherboards", "add_basket", "Добавить в корзину", r)
+	videocards := makeData(false, "", "Видеокарта", "videocards", "add_basket", "Добавить в корзину", r)
+	rams := makeData(false, "", "Оперативная память", "rams", "add_basket", "Добавить в корзину", r)
 	if r.Method == "GET" {
 		menu(w, r)
+		execute(w, "header.html", "Список товаров")
 		execute(w, "show_units.html", processors)
 		execute(w, "show_units.html", motherboards)
 		execute(w, "show_units.html", videocards)
@@ -188,7 +191,7 @@ type Data struct {
 	Text     string
 }
 
-func makeData(showCategory bool, categoryNames string, categoryName string, categoryLink string, actionLink string, actionText string) DataFull {
+func makeData(showCategory bool, categoryNames string, categoryName string, categoryLink string, actionLink string, actionText string, r *http.Request) DataFull {
 	categories, _ := database.GetAllCategories()
 	categoryID := 0
 	for i := 0; i < len(categories); i++ {
@@ -203,14 +206,21 @@ func makeData(showCategory bool, categoryNames string, categoryName string, cate
 		logger.Info("Список товаров категории ", categoryName, " получен успешно.")
 	}
 
-	data := make([]Data, len(units))
-	for i := 0; i < len(units); i++ {
+	var filteredUnits []database.Unit
+	if showCategory {
+		filteredUnits = filterUnits(units, categoryName, r)
+	} else {
+		filteredUnits = units
+	}
 
-		data[i].Picture = units[i].Pictures[0]
-		data[i].LinkUnit = "/categories/" + categoryLink + "/" + strconv.Itoa(units[i].ID)
-		data[i].Name = units[i].Name
-		data[i].Price = units[i].Price
-		data[i].Link = "/" + actionLink + "/" + strconv.Itoa(units[i].ID)
+	data := make([]Data, len(filteredUnits))
+	for i := 0; i < len(filteredUnits); i++ {
+
+		data[i].Picture = filteredUnits[i].Pictures[0]
+		data[i].LinkUnit = "/categories/" + categoryLink + "/" + strconv.Itoa(filteredUnits[i].ID)
+		data[i].Name = filteredUnits[i].Name
+		data[i].Price = filteredUnits[i].Price
+		data[i].Link = "/" + actionLink + "/" + strconv.Itoa(filteredUnits[i].ID)
 		data[i].Text = actionText
 	}
 
@@ -257,4 +267,83 @@ func makeNothingData(picture string, text string) NothingData {
 	data.Picture = picture
 	data.Text = text
 	return data
+}
+
+func filterUnits(units []database.Unit, categoryName string, r *http.Request) []database.Unit {
+	session, _ := store.Get(r, "cookie-name")
+	processorID, _ := session.Values["processor"].(int)
+	processor, _ := database.GetUnit(processorID)
+
+	motherboardID, _ := session.Values["motherboard"].(int)
+	motherboard, _ := database.GetUnit(motherboardID)
+
+	videocardID, _ := session.Values["videocard"].(int)
+	videocard, _ := database.GetUnit(videocardID)
+
+	ramID, _ := session.Values["ram"].(int)
+	ram, _ := database.GetUnit(ramID)
+	filteredUnits := []database.Unit{}
+	if len(units) != 0 {
+		if categoryName == "Процессор" {
+			for i := 0; i < len(units); i++ {
+				if motherboard.Name != "" {
+					// Сокет
+					if units[i].Features[5].Value != motherboard.Features[3].Value {
+						continue
+					}
+				}
+				filteredUnits = append(filteredUnits, units[i])
+			}
+		}
+		if categoryName == "Материнская плата" {
+			for i := 0; i < len(units); i++ {
+				if processor.Name != "" {
+					// Сокет
+					if units[i].Features[3].Value != processor.Features[5].Value {
+						continue
+					}
+				}
+				if ram.Name != "" {
+					// DDR
+					if units[i].Features[6].Value < ram.Features[4].Value {
+						continue
+					}
+				}
+				if videocard.Name != "" {
+					// PCI-Express
+					stringArray := strings.Split(videocard.Features[8].Value, " ")
+					intefaceValue := stringArray[2]
+					if units[i].Features[8].Value < intefaceValue {
+						continue
+					}
+				}
+				filteredUnits = append(filteredUnits, units[i])
+			}
+		}
+		if categoryName == "Видеокарта" {
+			for i := 0; i < len(units); i++ {
+				if motherboard.Name != "" {
+					// PCI-Express
+					stringArray := strings.Split(units[i].Features[8].Value, " ")
+					intefaceValue := stringArray[2]
+					if intefaceValue > motherboard.Features[8].Value {
+						continue
+					}
+				}
+				filteredUnits = append(filteredUnits, units[i])
+			}
+		}
+		if categoryName == "Оперативная память" {
+			for i := 0; i < len(units); i++ {
+				if motherboard.Name != "" {
+					// DDR
+					if units[i].Features[4].Value > motherboard.Features[6].Value {
+						continue
+					}
+				}
+				filteredUnits = append(filteredUnits, units[i])
+			}
+		}
+	}
+	return filteredUnits
 }
