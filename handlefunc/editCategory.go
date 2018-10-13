@@ -14,8 +14,7 @@ func categories(w http.ResponseWriter, r *http.Request) {
 	categories, err := database.GetAllCategories()
 	if err != nil {
 		logger.Warn(err, "Не удалось загрузить список категорий!")
-	} else {
-		logger.Info("Список категорий получен успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -36,14 +35,12 @@ func showCategory(w http.ResponseWriter, r *http.Request) {
 	category, err := database.GetCategory(categoryID)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить запись о категории ", categoryID, "!")
-	} else {
-		logger.Info("Данные о категории ", categoryID, " получены успешно.")
+		return
 	}
 	features, err := database.GetAllFeatures()
 	if err != nil {
 		logger.Warn(err, "Не удалось загрузить список характеристик!")
-	} else {
-		logger.Info("Список характеристик получен успешно.")
+		return
 	}
 	type FeatureBool struct {
 		Feature database.Feature
@@ -82,8 +79,7 @@ func updateCategory(w http.ResponseWriter, r *http.Request) {
 		features, err := database.GetAllFeatures()
 		if err != nil {
 			logger.Warn(err, "Не удалось загрузить список характеристик!")
-		} else {
-			logger.Info("Список характеристик получен успешно.")
+			return
 		}
 		j := 0
 		tempFeatures := make([]database.Feature, len(features))
@@ -100,9 +96,9 @@ func updateCategory(w http.ResponseWriter, r *http.Request) {
 		err = database.UpdateCategory(result.ID, result.ParentID, result.Name, result.Features)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить категорию ", result.ID, "!")
-		} else {
-			logger.Info("Категория ", result.ID, " обновлена успешно.")
+			return
 		}
+		logger.Info("Категория ", result.ID, " обновлена успешно.")
 		http.Redirect(w, r, "/edit/categories", 302)
 	}
 }
@@ -111,8 +107,7 @@ func addCategory(w http.ResponseWriter, r *http.Request) {
 	features, err := database.GetAllFeatures()
 	if err != nil {
 		logger.Warn(err, "Не удалось загрузить список характеристик!")
-	} else {
-		logger.Info("Список характеристик получен успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -159,9 +154,9 @@ func delCategory(w http.ResponseWriter, r *http.Request) {
 		err := database.DelCategory(categoryID)
 		if err != nil {
 			logger.Warn(err, "Не удалось удалить запись о категории ", categoryID, "!")
-		} else {
-			logger.Info("Удаление записи о категории ", categoryID, " прошло успешно.")
+			return
 		}
+		logger.Info("Удаление записи о категории ", categoryID, " прошло успешно.")
 		http.Redirect(w, r, "/edit/categories", 302)
 	}
 }
@@ -171,9 +166,9 @@ func delAllCategories(w http.ResponseWriter, r *http.Request) {
 		err := database.DelAllCategories()
 		if err != nil {
 			logger.Warn(err, "Не удалось удалить все записи о категориях!")
-		} else {
-			logger.Info("Удаление всех записей о категориях прошло успешно.")
+			return
 		}
+		logger.Info("Удаление всех записей о категориях прошло успешно.")
 		http.Redirect(w, r, "/edit/categories", 302)
 	}
 }

@@ -17,8 +17,7 @@ func units(w http.ResponseWriter, r *http.Request) {
 	units, err := database.GetAllUnits()
 	if err != nil {
 		logger.Warn(err, "Не удалось загрузить список товаров!")
-	} else {
-		logger.Info("Список товаров получен успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -35,12 +34,12 @@ func showUnit(w http.ResponseWriter, r *http.Request) {
 	unitID, errString := strconv.Atoi(unitIDstring)
 	if errString != nil {
 		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+		return
 	}
 	unit, err := database.GetUnit(unitID)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить данные о товаре ", unitID, "!")
-	} else {
-		logger.Info("Данные о товаре ", unitID, " получены успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -55,12 +54,12 @@ func updateUnit(w http.ResponseWriter, r *http.Request) {
 	unitID, errString := strconv.Atoi(r.FormValue("id"))
 	if errString != nil {
 		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+		return
 	}
 	unit, err := database.GetUnit(unitID)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить запись о товаре ", unitID, "!")
-	} else {
-		logger.Info("Данные о товаре ", unitID, " получены успешно.")
+		return
 	}
 	if r.Method == "POST" {
 		unit.Name = r.FormValue("name")
@@ -70,9 +69,9 @@ func updateUnit(w http.ResponseWriter, r *http.Request) {
 		err := database.UpdateUnit(unit.ID, unit.Name, unit.CategoryID, unit.Quantity, unit.Price, unit.Discount, unit.Features, unit.Pictures)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить товар ", unit.ID, "!")
-		} else {
-			logger.Info("Товар ", unit.ID, " обновлён успешно.")
+			return
 		}
+		logger.Info("Товар ", unit.ID, " обновлён успешно.")
 		http.Redirect(w, r, "/edit/units", 302)
 	}
 }
@@ -81,8 +80,7 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 	categories, err := database.GetAllCategories()
 	if err != nil {
 		logger.Warn(err, "Не удалось загрузить список категорий!")
-	} else {
-		logger.Info("Список категорий получен успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -141,9 +139,9 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 		errUpdate := database.UpdateUnit(id, result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
 		if errUpdate != nil {
 			logger.Warn(errAdd, "Не удалось обновить информацию о товаре ", id, "!")
-		} else {
-			logger.Info("Обновление информации о товаре ", id, " прошло успешно.")
+			return
 		}
+		logger.Info("Обновление информации о товаре ", id, " прошло успешно.")
 		http.Redirect(w, r, "/edit/units", 302)
 	}
 }
@@ -154,9 +152,9 @@ func delUnit(w http.ResponseWriter, r *http.Request) {
 		err := database.DelUnit(unitID)
 		if err != nil {
 			logger.Warn(err, "Не удалось удалить запись о товаре ", unitID, "!")
-		} else {
-			logger.Info("Удаление записи о товаре ", unitID, " прошло успешно.")
+			return
 		}
+		logger.Info("Удаление записи о товаре ", unitID, " прошло успешно.")
 		path := "pictures/" + strconv.Itoa(unitID) + "/"
 		files.RemoveAllFiles(path)
 		http.Redirect(w, r, "/edit/units", 302)
@@ -168,9 +166,9 @@ func delAllUnits(w http.ResponseWriter, r *http.Request) {
 		err := database.DelAllUnits()
 		if err != nil {
 			logger.Warn(err, "Не удалось удалить все записи о товарах!")
-		} else {
-			logger.Info("Удаление всех записей о товарах прошло успешно.")
+			return
 		}
+		logger.Info("Удаление всех записей о товарах прошло успешно.")
 		path := "pictures/"
 		files.RemoveAllFiles(path)
 		http.Redirect(w, r, "/edit/units", 302)

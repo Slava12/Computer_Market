@@ -202,8 +202,7 @@ func makeData(showCategory bool, categoryNames string, categoryName string, cate
 	units, err := database.GetUnitsByCategoryID(categoryID)
 	if err != nil {
 		logger.Warn(err, "Не удалось загрузить список товаров категории ", categoryName, "!")
-	} else {
-		logger.Info("Список товаров категории ", categoryName, " получен успешно.")
+		return DataFull{}
 	}
 
 	var filteredUnits []database.Unit

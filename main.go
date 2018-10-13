@@ -18,15 +18,13 @@ func main() {
 	logger.Init(logs)
 	if errorLoadConfig != nil {
 		logger.Error(errorLoadConfig, "Файл конфигурации не был загружен!")
-	} else {
-		logger.Info("Файл конфигурации успешно загружен.")
 	}
+	logger.Info("Файл конфигурации успешно загружен.")
 	errorDatabase := database.Connect(configFile)
 	if errorDatabase != nil {
 		logger.Error(errorDatabase, "Не удалось подключиться к базе данных!")
-	} else {
-		logger.Info("Подключение к базе данных прошло успешно.")
 	}
+	logger.Info("Подключение к базе данных прошло успешно.")
 
 	folder := configFile.Files.Folder
 	files.CreateDirectory(folder)
@@ -36,10 +34,4 @@ func main() {
 	handlefunc.InitRandomizer()
 
 	handlefunc.InitHTTP(configFile)
-
-	//user := database.User{0, 0, "lol", "123", "", ""}
-	//_ = database.NewUser(user.AccessLevel, user.Login, user.Password, user.Email, user.FullName)
-	//_ = database.DelUser(3)
-	/*users, _ := database.GetAllUsers()
-	fmt.Println(users)*/
 }

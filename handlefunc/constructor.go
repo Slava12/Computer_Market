@@ -77,12 +77,12 @@ func addConstructor(w http.ResponseWriter, r *http.Request) {
 	unitID, errString := strconv.Atoi(unitIDstring)
 	if errString != nil {
 		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+		return
 	}
 	unit, err := database.GetUnit(unitID)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить запись о товаре ", unitID, "!")
-	} else {
-		logger.Info("Данные о товаре ", unitID, " получены успешно.")
+		return
 	}
 	category, _ := database.GetCategory(unit.CategoryID)
 	if category.Name == "Процессор" {
@@ -108,12 +108,12 @@ func removeConstructor(w http.ResponseWriter, r *http.Request) {
 	unitID, errString := strconv.Atoi(unitIDstring)
 	if errString != nil {
 		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+		return
 	}
 	unit, err := database.GetUnit(unitID)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить запись о товаре ", unitID, "!")
-	} else {
-		logger.Info("Данные о товаре ", unitID, " получены успешно.")
+		return
 	}
 	category, _ := database.GetCategory(unit.CategoryID)
 	if category.Name == "Процессор" {

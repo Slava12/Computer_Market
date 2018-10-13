@@ -14,8 +14,7 @@ func features(w http.ResponseWriter, r *http.Request) {
 	features, err := database.GetAllFeatures()
 	if err != nil {
 		logger.Warn(err, "Не удалось загрузить список характеристик!")
-	} else {
-		logger.Info("Список характеристик получен успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -32,12 +31,12 @@ func showFeature(w http.ResponseWriter, r *http.Request) {
 	featureID, errString := strconv.Atoi(featureIDstring)
 	if errString != nil {
 		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+		return
 	}
 	feature, err := database.GetFeature(featureID)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить запись о характеристике ", featureID, "!")
-	} else {
-		logger.Info("Данные о характеристике ", featureID, " получены успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -56,9 +55,9 @@ func updateFeature(w http.ResponseWriter, r *http.Request) {
 		err := database.UpdateFeature(result.ID, result.Name)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить характеристику ", result.ID, "!")
-		} else {
-			logger.Info("Характеристика ", result.ID, " обновлена успешно.")
+			return
 		}
+		logger.Info("Характеристика ", result.ID, " обновлена успешно.")
 		http.Redirect(w, r, "/edit/features", 302)
 	}
 }
@@ -96,9 +95,9 @@ func delFeature(w http.ResponseWriter, r *http.Request) {
 		err := database.DelFeature(featureID)
 		if err != nil {
 			logger.Warn(err, "Не удалось удалить запись о характеристике ", featureID, "!")
-		} else {
-			logger.Info("Удаление записи о характеристике ", featureID, " прошло успешно.")
+			return
 		}
+		logger.Info("Удаление записи о характеристике ", featureID, " прошло успешно.")
 		http.Redirect(w, r, "/edit/features", 302)
 	}
 }
@@ -108,9 +107,9 @@ func delAllFeatures(w http.ResponseWriter, r *http.Request) {
 		err := database.DelAllFeatures()
 		if err != nil {
 			logger.Warn(err, "Не удалось удалить все записи о характеристиках!")
-		} else {
-			logger.Info("Удаление всех записей о характеристиках прошло успешно.")
+			return
 		}
+		logger.Info("Удаление всех записей о характеристиках прошло успешно.")
 		http.Redirect(w, r, "/edit/features", 302)
 	}
 }

@@ -90,6 +90,7 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 		id, err := database.NewUser(0, false, email, password, name, "")
 		if err != nil {
 			logger.Warn(err, "Не удалось добавить нового пользователя!")
+			return
 		}
 		logger.Info("Добавление пользователя", id, "прошло успешно.")
 
@@ -97,6 +98,7 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 		codeID, err := database.NewCode(code, id)
 		if err != nil {
 			logger.Warn(err, "Не удалось создать код подтверждения!")
+			return
 		}
 		logger.Info("Код подтверждения ", codeID, " успешно создан.")
 		body := "Ваш код активации: " + strconv.Itoa(code)
@@ -134,6 +136,7 @@ func confirmAccount(w http.ResponseWriter, r *http.Request) {
 		code, errGet := database.GetCodeByUserID(user.ID)
 		if errGet != nil {
 			logger.Warn(errGet, "Не удалось получить данные о коде подтверждения!")
+			return
 		}
 		logger.Info("Данные о коде подтверждения получены успешно.")
 		if strconv.Itoa(code.Code) != inputCode {
@@ -147,16 +150,15 @@ func confirmAccount(w http.ResponseWriter, r *http.Request) {
 		err := database.UpdateUserConfirmed(user.ID, true)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить запись пользователя ", user.ID, "!")
-		} else {
-			logger.Info("Запись пользователя ", user.ID, " обновлена успешно.")
+			return
 		}
+		logger.Info("Запись пользователя ", user.ID, " обновлена успешно.")
 
 		http.Redirect(w, r, "/index", 302)
 	}
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
-	//if r.Method == "POST" {
 	session, _ := store.Get(r, "cookie-name")
 	login, _ := session.Values["login"].(string)
 
@@ -165,5 +167,4 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	session.Values["authenticated"] = false
 	session.Save(r, w)
 	http.Redirect(w, r, "/index", 302)
-	//}
 }

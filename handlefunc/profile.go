@@ -41,8 +41,7 @@ func changeProfile(w http.ResponseWriter, r *http.Request) {
 	user, err := database.GetUserByEmail(email)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить запись о пользователе ", email, "!")
-	} else {
-		logger.Info("Данные о пользователе ", email, " получены успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -58,9 +57,9 @@ func changeProfile(w http.ResponseWriter, r *http.Request) {
 		err := database.UpdateUser(user.ID, user.AccessLevel, user.Confirmed, user.Email, password, firstName, secondName)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить запись пользователя ", user.ID, "!")
-		} else {
-			logger.Info("Запись пользователя ", user.ID, " обновлена успешно.")
+			return
 		}
+		logger.Info("Запись пользователя ", user.ID, " обновлена успешно.")
 		http.Redirect(w, r, "/profile", 302)
 	}
 }

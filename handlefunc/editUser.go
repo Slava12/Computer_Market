@@ -13,8 +13,7 @@ func users(w http.ResponseWriter, r *http.Request) {
 	users, err := database.GetAllUsers()
 	if err != nil {
 		logger.Warn(err, "Не удалось загрузить список пользователей!")
-	} else {
-		logger.Info("Список пользователей получен успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -31,12 +30,12 @@ func showUser(w http.ResponseWriter, r *http.Request) {
 	userID, errString := strconv.Atoi(userIDstring)
 	if errString != nil {
 		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+		return
 	}
 	user, err := database.GetUser(userID)
 	if err != nil {
 		logger.Warn(err, "Не удалось получить запись о пользователе ", userID, "!")
-	} else {
-		logger.Info("Данные о пользователе ", userID, " получены успешно.")
+		return
 	}
 	if r.Method == "GET" {
 		menu(w, r)
@@ -64,9 +63,9 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 		err := database.UpdateUser(result.ID, result.AccessLevel, result.Confirmed, result.Email, result.Password, result.FirstName, result.SecondName)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить запись пользователя ", result.ID, "!")
-		} else {
-			logger.Info("Запись пользователя ", result.ID, " обновлена успешно.")
+			return
 		}
+		logger.Info("Запись пользователя ", result.ID, " обновлена успешно.")
 		http.Redirect(w, r, "/edit/users", 302)
 	}
 }
@@ -94,9 +93,9 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 		id, err := database.NewUser(result.AccessLevel, result.Confirmed, result.Email, result.Password, result.FirstName, result.SecondName)
 		if err != nil {
 			logger.Warn(err, "Не удалось добавить нового пользователя!")
-		} else {
-			logger.Info("Добавление пользователя", id, "прошло успешно.")
+			return
 		}
+		logger.Info("Добавление пользователя", id, "прошло успешно.")
 		http.Redirect(w, r, "/edit/users", 302)
 	}
 }
@@ -107,9 +106,9 @@ func delUser(w http.ResponseWriter, r *http.Request) {
 		err := database.DelUser(userID)
 		if err != nil {
 			logger.Warn(err, "Не удалось удалить запись о пользователе ", userID, "!")
-		} else {
-			logger.Info("Удаление записи о пользователе ", userID, " прошло успешно.")
+			return
 		}
+		logger.Info("Удаление записи о пользователе ", userID, " прошло успешно.")
 		http.Redirect(w, r, "/edit/users", 302)
 	}
 }
@@ -119,9 +118,9 @@ func delAllUsers(w http.ResponseWriter, r *http.Request) {
 		err := database.DelAllUsers()
 		if err != nil {
 			logger.Warn(err, "Не удалось удалить всех пользователей!")
-		} else {
-			logger.Info("Удаление всех пользователей прошло успешно.")
+			return
 		}
+		logger.Info("Удаление всех пользователей прошло успешно.")
 		http.Redirect(w, r, "/edit/users", 302)
 	}
 }
