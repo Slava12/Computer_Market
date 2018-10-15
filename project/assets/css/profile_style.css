@@ -35,12 +35,8 @@ body {
 	font-family: "Roboto",sans-serif;
 }
 
-.buttonA {
-	font-size: 14pt;
-	margin: 0 auto;
+.buttonB a {
 	width: 200px;
-	text-align: center;
-	padding: 5px;
 }
 
 .form {

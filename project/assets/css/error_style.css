@@ -9,10 +9,6 @@ body {
     text-align: center;
 }
 
-.buttonA {
-    font-size: 14pt;
-    margin: 0 auto;
-    width: 150px;
-    text-align: center;
-    padding-top: 6px;
+.buttonB a {
+	width: 150px;
 }

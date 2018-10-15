@@ -18,6 +18,20 @@
   vertical-align: -5px;
 }
 
+.buttonB {
+  font-size: 14pt;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.buttonB a {
+  color: white;
+  background: #8ac858;
+  display: inline-block;
+  text-decoration: none;
+  padding: 15px 0px;
+}
+
 .button {
   font-family: "Roboto",sans-serif;
   background: #8ac858;
