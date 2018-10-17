@@ -54,7 +54,7 @@ type Post struct {
 func Parse() (Config, error) {
 	config := Config{}
 
-	configurationPath := flag.String("path", "D:\\Golang\\src\\github.com\\Slava12\\Computer_Market\\project\\conf.yaml", "Путь до файла конфигурации.")
+	configurationPath := flag.String("path", "conf.yaml", "Путь до файла конфигурации.")
 	flag.Parse()
 
 	bytesFile, errorReadFile := ioutil.ReadFile(*configurationPath)
