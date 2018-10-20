@@ -2,6 +2,14 @@
 	<title>Характеристики</title>
 	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
 </head>
+<div><button class="button"><a href="/add_features">Добавить характеристики</a></button></div>
+<div><button class="button"><a href="/add_feature">Добавить характеристику</a></button></div>
+<div class="form">
+	<form action="/delete_all_features" method="post">
+		<div><input type="submit" class="button" value="Удалить все характеристики"></div>
+	</form>
+</div>
+<div><button class="button"><a href="/edit">Вернуться ко всем записям</a></button></div>
 {{range .}}
 <div class="records">
 	<div class="fieldName">ID:</div>
@@ -11,10 +19,3 @@
 	<button class="button"><a href="/edit/features/{{.ID}}">Редактировать</a></button>
 </div>
 {{end}}
-<div><button class="button"><a href="/add_feature">Добавить характеристику</a></button></div>
-<div class="form">
-	<form action="/delete_all_features" method="post">
-		<div><input type="submit" class="button" value="Удалить все характеристики"></div>
-	</form>
-</div>
-<div><button class="button"><a href="/edit">Вернуться ко всем записям</a></button></div>

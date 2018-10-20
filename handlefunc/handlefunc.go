@@ -55,6 +55,7 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/edit/features/{id}", showFeature)
 	r.HandleFunc("/update_feature", updateFeature)
 	r.HandleFunc("/add_feature", addFeature)
+	r.HandleFunc("/add_features", addFeatures)
 	r.HandleFunc("/delete_feature", delFeature)
 	r.HandleFunc("/delete_all_features", delAllFeatures)
 
