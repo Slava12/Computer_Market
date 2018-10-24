@@ -73,6 +73,8 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/delete_unit", delUnit)
 	r.HandleFunc("/delete_all_units", delAllUnits)
 
+	r.HandleFunc("/add_motherboard", addMotherboard)
+
 	r.HandleFunc("/edit/orders", orders)
 
 	r.HandleFunc("/categories", showCategories)
