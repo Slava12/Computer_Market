@@ -66,7 +66,7 @@ func updateUnit(w http.ResponseWriter, r *http.Request) {
 		unit.Quantity, _ = strconv.Atoi(r.FormValue("quantity"))
 		unit.Price, _ = strconv.Atoi(r.FormValue("price"))
 		unit.Discount, _ = strconv.Atoi(r.FormValue("discount"))
-		err := database.UpdateUnit(unit.ID, unit.Name, unit.CategoryID, unit.Quantity, unit.Price, unit.Discount, unit.Features, unit.Pictures)
+		err := database.UpdateUnit(unit.ID, unit.Name, unit.CategoryID, unit.Quantity, unit.Price, unit.Discount, unit.Popularity, unit.Features, unit.Pictures)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить товар ", unit.ID, "!")
 			return
@@ -96,6 +96,7 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 		result.Quantity, _ = strconv.Atoi(r.FormValue("quantity"))
 		result.Price, _ = strconv.Atoi(r.FormValue("price"))
 		result.Discount, _ = strconv.Atoi(r.FormValue("discount"))
+		result.Popularity = 0
 		features := r.FormValue("features")
 		if features != "" {
 			arrayString := strings.Split(features, ";")
@@ -106,7 +107,7 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 				result.Features[i].Value = res[1]
 			}
 		}
-		id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
+		id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Popularity, result.Features, result.Pictures)
 		if errAdd != nil {
 			logger.Warn(errAdd, "Не удалось добавить новый товар!")
 			message := errortemplate.GenerateMessage(errAdd)
@@ -136,7 +137,7 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 				result.Pictures[i] = fileName
 			}
 		}
-		errUpdate := database.UpdateUnit(id, result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
+		errUpdate := database.UpdateUnit(id, result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Popularity, result.Features, result.Pictures)
 		if errUpdate != nil {
 			logger.Warn(errAdd, "Не удалось обновить информацию о товаре ", id, "!")
 			return

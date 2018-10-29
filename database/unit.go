@@ -16,12 +16,13 @@ type Unit struct {
 	Quantity   int
 	Price      int
 	Discount   int
+	Popularity int
 	Features   []FeatureUnit
 	Pictures   []string `json:"pictures"`
 }
 
 // NewUnit добавляет новый товар в базу данных
-func NewUnit(name string, categoryID int, quantity int, price int, discount int, features []FeatureUnit, pictures []string) (id int, err error) {
+func NewUnit(name string, categoryID int, quantity int, price int, discount int, popularity int, features []FeatureUnit, pictures []string) (id int, err error) {
 	featuresJSON, errMarshal := json.Marshal(features)
 	if errMarshal != nil {
 		return 0, errMarshal
@@ -30,8 +31,8 @@ func NewUnit(name string, categoryID int, quantity int, price int, discount int,
 	if errMarshal != nil {
 		return 0, errMarshal
 	}
-	err = db.QueryRow("insert into units (name, category_id, quantity, price, discount, features, pictures) values ($1, $2, $3, $4, $5, $6, $7) returning id",
-		name, categoryID, quantity, price, discount, featuresJSON, picturesJSON).Scan(&id)
+	err = db.QueryRow("insert into units (name, category_id, quantity, price, discount, popularity, features, pictures) values ($1, $2, $3, $4, $5, $6, $7, $8) returning id",
+		name, categoryID, quantity, price, discount, popularity, featuresJSON, picturesJSON).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -62,7 +63,7 @@ func GetUnit(ID int) (Unit, error) {
 	unit := Unit{}
 	var features string
 	var pictures string
-	err := row.Scan(&unit.ID, &unit.Name, &unit.CategoryID, &unit.Quantity, &unit.Price, &unit.Discount, &features, &pictures)
+	err := row.Scan(&unit.ID, &unit.Name, &unit.CategoryID, &unit.Quantity, &unit.Price, &unit.Discount, &unit.Popularity, &features, &pictures)
 	if err != nil {
 		return Unit{}, err
 	}
@@ -90,7 +91,7 @@ func GetUnitsByCategoryID(id int) ([]Unit, error) {
 	pictures := []string{}
 	picture := ""
 	for rows.Next() {
-		err = rows.Scan(&unit.ID, &unit.Name, &unit.CategoryID, &unit.Quantity, &unit.Price, &unit.Discount, &feature, &picture)
+		err = rows.Scan(&unit.ID, &unit.Name, &unit.CategoryID, &unit.Quantity, &unit.Price, &unit.Discount, &unit.Popularity, &feature, &picture)
 		if err != nil {
 			return []Unit{}, err
 		}
@@ -124,7 +125,7 @@ func GetAllUnits() ([]Unit, error) {
 	pictures := []string{}
 	picture := ""
 	for rows.Next() {
-		err = rows.Scan(&unit.ID, &unit.Name, &unit.CategoryID, &unit.Quantity, &unit.Price, &unit.Discount, &feature, &picture)
+		err = rows.Scan(&unit.ID, &unit.Name, &unit.CategoryID, &unit.Quantity, &unit.Price, &unit.Discount, &unit.Popularity, &feature, &picture)
 		if err != nil {
 			return []Unit{}, err
 		}
@@ -146,7 +147,7 @@ func GetAllUnits() ([]Unit, error) {
 }
 
 // UpdateUnit обновляет значения полей товара
-func UpdateUnit(ID int, name string, categoryID int, quantity int, price int, discount int, features []FeatureUnit, pictures []string) error {
+func UpdateUnit(ID int, name string, categoryID int, quantity int, price int, discount int, popularity int, features []FeatureUnit, pictures []string) error {
 	featuresJSON, errMarshal := json.Marshal(features)
 	if errMarshal != nil {
 		return errMarshal
@@ -155,8 +156,8 @@ func UpdateUnit(ID int, name string, categoryID int, quantity int, price int, di
 	if errMarshal != nil {
 		return errMarshal
 	}
-	_, err := db.Exec("update units set name = $1, category_id = $2, quantity = $3, price = $4, discount = $5, features = $6, pictures = $7 where id = $8",
-		name, categoryID, quantity, price, discount, featuresJSON, picturesJSON, ID)
+	_, err := db.Exec("update units set name = $1, category_id = $2, quantity = $3, price = $4, discount = $5, popularity = $6, features = $7, pictures = $8 where id = $9",
+		name, categoryID, quantity, price, discount, popularity, featuresJSON, picturesJSON, ID)
 	if err != nil {
 		return err
 	}

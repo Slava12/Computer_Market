@@ -163,7 +163,7 @@ func AddMotherboard(url string) {
 	result.Pictures = append(result.Pictures, tempString)
 	tempString, _ = nodes.Find("#gallery-image-2245").Attr("href")
 	result.Pictures = append(result.Pictures, tempString)
-	id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Features, result.Pictures)
+	id, errAdd := database.NewUnit(result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Popularity, result.Features, result.Pictures)
 	if errAdd != nil {
 		logger.Warn(errAdd, "Не удалось добавить новый товар!")
 		return
