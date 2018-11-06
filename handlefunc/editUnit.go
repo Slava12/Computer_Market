@@ -139,7 +139,7 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 		}
 		errUpdate := database.UpdateUnit(id, result.Name, result.CategoryID, result.Quantity, result.Price, result.Discount, result.Popularity, result.Features, result.Pictures)
 		if errUpdate != nil {
-			logger.Warn(errAdd, "Не удалось обновить информацию о товаре ", id, "!")
+			logger.Warn(errUpdate, "Не удалось обновить информацию о товаре ", id, "!")
 			return
 		}
 		logger.Info("Обновление информации о товаре ", id, " прошло успешно.")

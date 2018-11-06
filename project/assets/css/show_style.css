@@ -2,7 +2,7 @@
 
 .unit {
 	height: 110px;
-	width: 900px;
+	width: 1000px;
 	background-color: white;
 	border-radius: 3px;
 	font-family: "Roboto",sans-serif;
@@ -24,7 +24,7 @@
 .name {
 	padding-left: 40px;
 	vertical-align: 42px;
-	font-size: 14pt;
+	font-size: 13pt;
 }
 
 .name a {

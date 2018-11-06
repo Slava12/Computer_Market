@@ -73,7 +73,10 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/delete_unit", delUnit)
 	r.HandleFunc("/delete_all_units", delAllUnits)
 
+	r.HandleFunc("/add_processor", addProcessor)
 	r.HandleFunc("/add_motherboard", addMotherboard)
+	r.HandleFunc("/add_videocard", addVideocard)
+	r.HandleFunc("/add_ram", addRAM)
 
 	r.HandleFunc("/edit/orders", orders)
 
@@ -135,7 +138,7 @@ func menu(w http.ResponseWriter, r *http.Request) {
 		accessLevel = true
 	} else {
 		page := r.URL.String()
-		if strings.Contains(page, "edit") {
+		if strings.Contains(page, "edit") || strings.Contains(page, "add") {
 			http.Redirect(w, r, "/index", 302)
 			return
 		}
@@ -172,6 +175,27 @@ func edit(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
 	}
+}
+
+func checkAccess(w http.ResponseWriter, r *http.Request) bool {
+	session, _ := store.Get(r, "cookie-name")
+	isLogged, _ := session.Values["authenticated"].(bool)
+	email, _ := session.Values["login"].(string)
+	user, _ := database.GetUserByEmail(email)
+	if !(user.AccessLevel == 10 && isLogged) {
+		return false
+	}
+	return true
+}
+
+func hidePage(w http.ResponseWriter, r *http.Request) bool {
+	access := checkAccess(w, r)
+	if access == false {
+		logger.Info("У тебя здесь нет власти!")
+		http.NotFound(w, r)
+		return false
+	}
+	return true
 }
 
 //---------------------------------------------------------------------------//
@@ -217,8 +241,9 @@ func makeData(showCategory bool, categoryNames string, categoryName string, cate
 
 	data := make([]Data, len(filteredUnits))
 	for i := 0; i < len(filteredUnits); i++ {
-
-		data[i].Picture = filteredUnits[i].Pictures[0]
+		if len(filteredUnits[i].Pictures) > 0 {
+			data[i].Picture = filteredUnits[i].Pictures[0]
+		}
 		data[i].LinkUnit = "/categories/" + categoryLink + "/" + strconv.Itoa(filteredUnits[i].ID)
 		data[i].Name = filteredUnits[i].Name
 		data[i].Price = filteredUnits[i].Price
@@ -290,7 +315,7 @@ func filterUnits(units []database.Unit, categoryName string, r *http.Request) []
 			for i := 0; i < len(units); i++ {
 				if motherboard.Name != "" {
 					// Сокет
-					if units[i].Features[5].Value != motherboard.Features[3].Value {
+					if units[i].Features[4].Value != motherboard.Features[3].Value {
 						continue
 					}
 				}
@@ -301,13 +326,13 @@ func filterUnits(units []database.Unit, categoryName string, r *http.Request) []
 			for i := 0; i < len(units); i++ {
 				if processor.Name != "" {
 					// Сокет
-					if units[i].Features[3].Value != processor.Features[5].Value {
+					if units[i].Features[3].Value != processor.Features[4].Value {
 						continue
 					}
 				}
 				if ram.Name != "" {
 					// DDR
-					if units[i].Features[6].Value < ram.Features[4].Value {
+					if units[i].Features[7].Value < ram.Features[4].Value {
 						continue
 					}
 				}
@@ -339,7 +364,7 @@ func filterUnits(units []database.Unit, categoryName string, r *http.Request) []
 			for i := 0; i < len(units); i++ {
 				if motherboard.Name != "" {
 					// DDR
-					if units[i].Features[4].Value > motherboard.Features[6].Value {
+					if units[i].Features[4].Value > motherboard.Features[7].Value {
 						continue
 					}
 				}
