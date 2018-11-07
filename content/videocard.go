@@ -16,8 +16,8 @@ func AddVideocard(url string, filesFolder string) {
 		logger.Warn(err, "Не удалось распарсить html-страницу!")
 		return
 	}
-	featuresNames := [8]string{"Производитель", "Модель", "Описание", "Длина", "Частота GPU", "Видеопамять", "Тип видеопамяти", "Интерфейс"}
-	featuresValues := make([]string, 8)
+	featuresNames := [9]string{"Производитель", "Модель", "Описание", "Длина", "GPU", "Частота GPU", "Видеопамять", "Тип видеопамяти", "Интерфейс"}
+	featuresValues := make([]string, 9)
 	featuresValues[0] = strings.TrimSpace(nodes.Find("#tdsa2943").Text())
 	temp := strings.Split(strings.TrimSpace(nodes.Find("#tdsa2944").Text()), " ")
 	for i := range temp {
@@ -29,19 +29,32 @@ func AddVideocard(url string, filesFolder string) {
 	}
 	featuresValues[2] = strings.TrimSpace(nodes.Find("#tdsa981").Text())
 	featuresValues[3] = strings.TrimSpace(nodes.Find("#tdsa955").Text())
+	featuresValues[4] = strings.TrimSpace(nodes.Find("#tdsa4190").Text())
+	index := strings.Index(featuresValues[4], "х")
+	if index != -1 {
+		if []rune(featuresValues[4])[index-1] == ' ' {
+			featuresValues[4] = featuresValues[4][0 : index-1]
+		} else {
+			featuresValues[4] = featuresValues[4][0:index]
+		}
+	}
+	index = strings.Index(featuresValues[4], "(")
+	if index != -1 {
+		featuresValues[4] = featuresValues[4][0 : index-1]
+	}
 	temp = strings.Split(strings.TrimSpace(nodes.Find("#tdsa4191").Text()), " ")
-	featuresValues[4] = temp[0] + " " + temp[1]
-	featuresValues[5] = strings.TrimSpace(nodes.Find("#tdsa689").Text())
-	featuresValues[6] = strings.TrimSpace(nodes.Find("#tdsa4187").Text())
+	featuresValues[5] = temp[0] + " " + temp[1]
+	featuresValues[6] = strings.TrimSpace(nodes.Find("#tdsa689").Text())
+	featuresValues[7] = strings.TrimSpace(nodes.Find("#tdsa4187").Text())
 	temp = strings.Split(strings.TrimSpace(nodes.Find("#tdsa567").Text()), " ")
-	featuresValues[7] = temp[0] + " " + temp[1] + " " + temp[2]
+	featuresValues[8] = temp[0] + " " + temp[1] + " " + temp[2]
 	result := database.Unit{}
-	result.Features = make([]database.FeatureUnit, 8)
+	result.Features = make([]database.FeatureUnit, 9)
 	for i := range result.Features {
 		result.Features[i].Name = featuresNames[i]
 		result.Features[i].Value = featuresValues[i]
 	}
-	result.Name = featuresValues[0] + " " + featuresValues[1]
+	result.Name = featuresValues[0] + " " + featuresValues[4] + " " + featuresValues[1]
 	result.CategoryID = 3
 	result.Quantity = 5
 	temp = strings.Split(strings.TrimSpace(nodes.Find(".price").First().Text()), " ")
@@ -65,6 +78,10 @@ func AddVideocard(url string, filesFolder string) {
 		result.Pictures = append(result.Pictures, tempString)
 	}
 	tempString, _ = nodes.Find("#gallery-image-2245").Attr("href")
+	if tempString != "" {
+		result.Pictures = append(result.Pictures, tempString)
+	}
+	tempString, _ = nodes.Find("#gallery-image-2236").Attr("href")
 	if tempString != "" {
 		result.Pictures = append(result.Pictures, tempString)
 	}

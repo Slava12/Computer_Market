@@ -95,6 +95,10 @@ func AddMotherboard(url string, filesFolder string) {
 	if tempString != "" {
 		result.Pictures = append(result.Pictures, tempString)
 	}
+	tempString, _ = nodes.Find("#gallery-image-2236").Attr("href")
+	if tempString != "" {
+		result.Pictures = append(result.Pictures, tempString)
+	}
 	if len(result.Pictures) == 0 {
 		return
 	}

@@ -172,6 +172,7 @@ func delAllUnits(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Удаление всех записей о товарах прошло успешно.")
 		path := "pictures/"
 		files.RemoveAllFiles(path)
+		files.CreateDirectory(filesFolder)
 		http.Redirect(w, r, "/edit/units", 302)
 	}
 }

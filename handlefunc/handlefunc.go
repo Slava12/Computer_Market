@@ -340,7 +340,7 @@ func filterUnits(units []database.Unit, categoryName string, r *http.Request) []
 					// PCI-Express
 					stringArray := strings.Split(videocard.Features[8].Value, " ")
 					intefaceValue := stringArray[2]
-					if units[i].Features[8].Value < intefaceValue {
+					if units[i].Features[9].Value < intefaceValue {
 						continue
 					}
 				}
@@ -353,7 +353,7 @@ func filterUnits(units []database.Unit, categoryName string, r *http.Request) []
 					// PCI-Express
 					stringArray := strings.Split(units[i].Features[8].Value, " ")
 					intefaceValue := stringArray[2]
-					if intefaceValue > motherboard.Features[8].Value {
+					if intefaceValue > motherboard.Features[9].Value {
 						continue
 					}
 				}
