@@ -191,7 +191,7 @@ func checkAccess(w http.ResponseWriter, r *http.Request) bool {
 func hidePage(w http.ResponseWriter, r *http.Request) bool {
 	access := checkAccess(w, r)
 	if access == false {
-		logger.Info("У тебя здесь нет власти!")
+		logger.Info(r.URL, "У тебя здесь нет власти!")
 		http.NotFound(w, r)
 		return false
 	}

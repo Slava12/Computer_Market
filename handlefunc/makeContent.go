@@ -7,21 +7,37 @@ import (
 )
 
 func addFeatures(w http.ResponseWriter, r *http.Request) {
+	access := hidePage(w, r)
+	if access == false {
+		return
+	}
 	content.AddFeaturesFromFile("./lists/features.txt")
 	http.Redirect(w, r, "/edit/features", 302)
 }
 
 func addProcessor(w http.ResponseWriter, r *http.Request) {
+	access := hidePage(w, r)
+	if access == false {
+		return
+	}
 	content.AddProcessorsFromFile("./lists/processors.txt", filesFolder)
 	http.Redirect(w, r, "/edit/units", 302)
 }
 
 func addMotherboard(w http.ResponseWriter, r *http.Request) {
+	access := hidePage(w, r)
+	if access == false {
+		return
+	}
 	content.AddMotherboardsFromFile("./lists/motherboards.txt", filesFolder)
 	http.Redirect(w, r, "/edit/units", 302)
 }
 
 func addVideocard(w http.ResponseWriter, r *http.Request) {
+	access := hidePage(w, r)
+	if access == false {
+		return
+	}
 	content.AddVideocardsFromFile("./lists/videocards.txt", filesFolder)
 	http.Redirect(w, r, "/edit/units", 302)
 }

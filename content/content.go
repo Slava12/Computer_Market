@@ -2,6 +2,7 @@ package content
 
 import (
 	"bufio"
+	"image/jpeg"
 	"io"
 	"net/http"
 	"os"
@@ -12,6 +13,7 @@ import (
 	"github.com/Slava12/Computer_Market/database"
 	"github.com/Slava12/Computer_Market/files"
 	"github.com/Slava12/Computer_Market/logger"
+	"github.com/nfnt/resize"
 	"golang.org/x/net/html/charset"
 )
 
@@ -112,15 +114,18 @@ func updateUnitPictures(unit database.Unit, id int, filesFolder string) {
 	files.CreateDirectory(filePath)
 	pictures := make([]string, len(unit.Pictures))
 	copy(pictures, unit.Pictures)
-	unit.Pictures = make([]string, len(pictures))
+	unit.Pictures = make([]string, 2*len(pictures))
 	for i, pic := range pictures {
 		segments := strings.Split(pic, "/")
 		segments = strings.Split(segments[len(segments)-1], ".")
 		fileExt := segments[len(segments)-1]
 		name := strconv.Itoa(i) + "." + fileExt
 		path := filePath + name
+		pathSmall := filePath + "s" + name
 		saveImageFromURL(pic, path)
-		unit.Pictures[i] = path
+		saveSmallImage(100, 0, path, pathSmall)
+		unit.Pictures[2*i] = pathSmall
+		unit.Pictures[2*i+1] = path
 	}
 	errUpdate := database.UpdateUnit(id, unit.Name, unit.CategoryID, unit.Quantity, unit.Price, unit.Discount, unit.Popularity, unit.Features, unit.Pictures)
 	if errUpdate != nil {
@@ -128,4 +133,28 @@ func updateUnitPictures(unit database.Unit, id int, filesFolder string) {
 		return
 	}
 	logger.Info("Обновление информации о товаре ", id, " прошло успешно.")
+}
+
+func saveSmallImage(width int, height int, pathIn string, pathOut string) {
+	file, err := os.Open(pathIn)
+	if err != nil {
+		logger.Warn(err, "Не открыть файл!")
+		return
+	}
+	img, err := jpeg.Decode(file)
+	if err != nil {
+		logger.Warn(err, "Не удалось декодировать изображение!")
+		return
+	}
+	file.Close()
+	m := resize.Resize(uint(width), uint(height), img, resize.Lanczos3)
+
+	out, err := os.Create(pathOut)
+	if err != nil {
+		logger.Warn(err, "Не удалось создать файл!")
+		return
+	}
+	defer out.Close()
+
+	jpeg.Encode(out, m, nil)
 }

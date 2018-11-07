@@ -97,7 +97,7 @@ func AddRAMFromURL(url string, filesFolder string) {
 	}
 	nodes.Find(".t").Each(func(index int, item *goquery.Selection) {
 		href, _ := item.Attr("href")
-		if !strings.Contains(href, "Registered") { // Убрать серверные
+		if !strings.Contains(href, "Registered") || !strings.Contains(href, "ECC") { // Убрать серверные
 			url = "https://www.nix.ru/" + href
 			AddRAM(url, filesFolder)
 		}
