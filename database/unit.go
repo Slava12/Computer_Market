@@ -78,7 +78,7 @@ func GetUnit(ID int) (Unit, error) {
 	return unit, nil
 }
 
-// GetUnitsByCategoryID возвращает данные обо всех товарах
+// GetUnitsByCategoryID возвращает данные о товарах по id категории
 func GetUnitsByCategoryID(id int) ([]Unit, error) {
 	rows, err := db.Query("select * from units where category_id=$1 order by id asc", id)
 	if err != nil {
