@@ -37,10 +37,12 @@ func InitHTTP(configFile config.Config) {
 
 	r.HandleFunc("/profile", profile)
 	r.HandleFunc("/profile/change", changeProfile)
-	r.HandleFunc("/basket", basket)
+	r.HandleFunc("/basket", ShowBasket)
 	r.HandleFunc("/orders", showOrders)
 
-	r.HandleFunc("/add_basket/{id}", addBasket)
+	r.HandleFunc("/add_basket/{id}", AddUnit)
+	r.HandleFunc("/remove_from_basket/{id}", RemoveFromBasket)
+	r.HandleFunc("/clear_basket", ClearBasket)
 
 	r.HandleFunc("/edit", edit)
 
@@ -67,7 +69,7 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/delete_all_categories", delAllCategories)
 
 	r.HandleFunc("/edit/units", units)
-	r.HandleFunc("/edit/units/{id}", showUnit)
+	r.HandleFunc("/edit/units/{id}", editUnit)
 	r.HandleFunc("/update_unit", updateUnit)
 	r.HandleFunc("/add_unit", addUnit)
 	r.HandleFunc("/delete_unit", delUnit)
@@ -83,16 +85,14 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/categories", showCategories)
 
 	r.HandleFunc("/categories/processors", showProcessors)
-	r.HandleFunc("/categories/processors/{id}", showProcessor)
 
 	r.HandleFunc("/categories/motherboards", showMotherboards)
-	r.HandleFunc("/categories/motherboards/{id}", showMotherboard)
 
 	r.HandleFunc("/categories/videocards", showVideocards)
-	r.HandleFunc("/categories/videocards/{id}", showVideocard)
 
 	r.HandleFunc("/categories/rams", showRams)
-	r.HandleFunc("/categories/rams/{id}", showRam)
+
+	r.HandleFunc("/units/{id}", showUnit)
 
 	r.HandleFunc("/constructor", showConstructor)
 	r.HandleFunc("/add_constructor/{id}", addConstructor)
@@ -244,7 +244,7 @@ func makeData(showCategory bool, categoryNames string, categoryName string, cate
 		if len(filteredUnits[i].Pictures) > 0 {
 			data[i].Picture = filteredUnits[i].Pictures[0]
 		}
-		data[i].LinkUnit = "/categories/" + categoryLink + "/" + strconv.Itoa(filteredUnits[i].ID)
+		data[i].LinkUnit = "/units/" + strconv.Itoa(filteredUnits[i].ID)
 		data[i].Name = filteredUnits[i].Name
 		data[i].Price = filteredUnits[i].Price
 		data[i].Link = "/" + actionLink + "/" + strconv.Itoa(filteredUnits[i].ID)

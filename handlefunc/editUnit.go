@@ -28,7 +28,7 @@ func units(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func showUnit(w http.ResponseWriter, r *http.Request) {
+func editUnit(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	unitIDstring := vars["id"]
 	unitID, errString := strconv.Atoi(unitIDstring)

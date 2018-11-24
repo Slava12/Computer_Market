@@ -2,8 +2,11 @@ package handlefunc
 
 import (
 	"net/http"
+	"strconv"
 
-	"github.com/Slava12/Computer_Market/errortemplate"
+	"github.com/Slava12/Computer_Market/database"
+	"github.com/Slava12/Computer_Market/logger"
+	"github.com/gorilla/mux"
 )
 
 func showProcessors(w http.ResponseWriter, r *http.Request) {
@@ -42,26 +45,24 @@ func showRams(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func showProcessor(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
-	execute(w, "error.html", errorMessage)
-}
-
-func showMotherboard(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
-	execute(w, "error.html", errorMessage)
-}
-
-func showVideocard(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
-	execute(w, "error.html", errorMessage)
-}
-
-func showRam(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
-	execute(w, "error.html", errorMessage)
+func showUnit(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	unitIDstring := vars["id"]
+	unitID, errString := strconv.Atoi(unitIDstring)
+	if errString != nil {
+		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+		return
+	}
+	unit, err := database.GetUnit(unitID)
+	if err != nil {
+		logger.Warn(err, "Не удалось получить данные о товаре ", unitID, "!")
+		return
+	}
+	if r.Method == "GET" {
+		menu(w, r)
+		err := tpl.ExecuteTemplate(w, "unit.html", unit)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+	}
 }

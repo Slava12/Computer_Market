@@ -64,19 +64,7 @@ func changeProfile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func basket(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
-	execute(w, "error.html", errorMessage)
-}
-
 func showOrders(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
-	execute(w, "error.html", errorMessage)
-}
-
-func addBasket(w http.ResponseWriter, r *http.Request) {
 	message := "Приносим свои извинения, работа над страницей ещё не завершена."
 	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
 	execute(w, "error.html", errorMessage)
