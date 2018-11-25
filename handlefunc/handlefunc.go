@@ -37,12 +37,14 @@ func InitHTTP(configFile config.Config) {
 
 	r.HandleFunc("/profile", profile)
 	r.HandleFunc("/profile/change", changeProfile)
-	r.HandleFunc("/basket", ShowBasket)
+
 	r.HandleFunc("/orders", showOrders)
 
-	r.HandleFunc("/add_basket/{id}", AddUnit)
-	r.HandleFunc("/remove_from_basket/{id}", RemoveFromBasket)
-	r.HandleFunc("/clear_basket", ClearBasket)
+	r.HandleFunc("/basket", showBasket)
+	r.HandleFunc("/add_basket/{id}", addToBasket)
+	r.HandleFunc("/remove_one_from_basket/{id}", removeOneFromBasket)
+	r.HandleFunc("/remove_from_basket/{id}", removeFromBasket)
+	r.HandleFunc("/clear_basket", clearBasket)
 
 	r.HandleFunc("/edit", edit)
 

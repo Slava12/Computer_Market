@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func ShowBasket(w http.ResponseWriter, r *http.Request) {
+func showBasket(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 	basket, _ := session.Values["basket"].(string)
 	units := strings.Split(basket, ";")
@@ -46,19 +46,25 @@ func ShowBasket(w http.ResponseWriter, r *http.Request) {
 	dataFull.Data = data
 	if r.Method == "GET" {
 		menu(w, r)
-		execute(w, "header.html", "Корзина")
+		if len(units) == 1 {
+			execute(w, "header.html", "Корзина пуста")
+		} else {
+			execute(w, "header.html", "Корзина")
+		}
 		err := tpl.ExecuteTemplate(w, "show_units.html", dataFull)
 		if err != nil {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
-		err = tpl.ExecuteTemplate(w, "basket.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		if len(units) != 1 {
+			err = tpl.ExecuteTemplate(w, "basket.html", nil)
+			if err != nil {
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
 		}
 	}
 }
 
-func AddUnit(w http.ResponseWriter, r *http.Request) {
+func addToBasket(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	unitIDstring := vars["id"]
 	session, _ := store.Get(r, "cookie-name")
@@ -95,7 +101,45 @@ func AddUnit(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/index", 302)
 }
 
-func RemoveFromBasket(w http.ResponseWriter, r *http.Request) {
+func removeOneFromBasket(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	unitIDstring := vars["id"]
+	session, _ := store.Get(r, "cookie-name")
+	basket, _ := session.Values["basket"].(string)
+	units := strings.Split(basket, ";")
+	for i := range units {
+		unitInfo := strings.Split(units[i], ":")
+		if unitInfo[0] == unitIDstring {
+			number, errString := strconv.Atoi(unitInfo[1])
+			if errString != nil {
+				logger.Warn(errString, "Не удалось конвертировать строку в число!")
+				return
+			}
+			number--
+			if number == 0 {
+				units[i] = "removed"
+				break
+			}
+			units[i] = unitInfo[0] + ":" + strconv.Itoa(number)
+			break
+		}
+	}
+	basket = ""
+	for i := range units {
+		if i == len(units)-1 { // Последняя запись всегда пустая
+			break
+		}
+		if units[i] == "removed" {
+			continue
+		}
+		basket += units[i] + ";"
+	}
+	session.Values["basket"] = basket
+	session.Save(r, w)
+	http.Redirect(w, r, "/basket", 302)
+}
+
+func removeFromBasket(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	unitIDstring := vars["id"]
 	session, _ := store.Get(r, "cookie-name")
@@ -123,7 +167,7 @@ func RemoveFromBasket(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/basket", 302)
 }
 
-func ClearBasket(w http.ResponseWriter, r *http.Request) {
+func clearBasket(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 	session.Values["basket"] = ""
 	session.Save(r, w)
