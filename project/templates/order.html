@@ -1,0 +1,48 @@
+<head>
+	<title>Заказ {{.ID}}</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+<body onload="ActiveCheckbox()">
+	<div class="form">
+		<form action="/update_order" method="post">
+			<div class=elem">
+				<div>ID</div>
+				<textarea name="id">{{.ID}}</textarea>
+			</div>
+			<div class=elem">
+				<div>Статус</div>
+				<div id="state" style="visibility: hidden;">{{.State}}</div>
+				<div>Выполняется</div>
+				<input id="state_1" type="checkbox" name="state_1" onclick="OneCheckbox(this)">
+				<div>Исполнен</div>
+				<input id="state_2" type="checkbox" name="state_2" onclick="OneCheckbox(this)">
+				<div>Отменён</div>
+				<input id="state_3" type="checkbox" name="state_3" onclick="OneCheckbox(this)">
+			</div>
+			<div class=elem">
+				<div>Товары</div>
+				<textarea name="units">{{.Units}}</textarea>
+			</div>
+			<div class=elem">
+				<div>ID пользователя</div>
+				<textarea name="user_id">{{.UserID}}</textarea>
+			</div>
+			<div class=elem">
+				<div>Стоимость</div>
+				<textarea name="cost">{{.Cost}}</textarea>
+			</div>
+			<div class=elem">
+				<div>Дата</div>
+				<textarea name="date" style="width: 250px;">{{.Date}}</textarea>
+			</div>
+			<div><input type="submit" class="button"></div>
+		</form>
+	</div>
+	<div class="form">
+		<form action="/delete_order" method="post">
+			<textarea class="features" name="id">{{.ID}}</textarea>
+			<div><input type="submit" class="button" value="Удалить заказ"></div>
+		</form>
+	</div>
+	<div><button class="button"><a href="/edit/orders">Вернуться к списку заказов</a></button></div>
+</body>

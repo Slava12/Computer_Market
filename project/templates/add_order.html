@@ -1,0 +1,31 @@
+<head>
+	<title>Добавление заказа</title>
+    <link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+<div class="form">
+	<form action="/add_order" method="post">
+		<div class=elem">
+            <div>Статус</div>
+            <div>Выполняется</div>
+            <input id="state_1" type="checkbox" name="state_1" onclick="OneCheckbox(this)">
+            <div>Исполнен</div>
+            <input id="state_2" type="checkbox" name="state_2" onclick="OneCheckbox(this)">
+            <div>Отменён</div>
+			<input id="state_3" type="checkbox" name="state_3" onclick="OneCheckbox(this)">
+		</div>
+		<div class=elem">
+			<div>Товары</div>
+			<textarea name="units"></textarea>
+		</div>
+		<div class=elem">
+			<div>ID пользователя</div>
+			<textarea name="user_id"></textarea>
+		</div>
+		<div class=elem">
+			<div>Стоимость</div>
+			<textarea name="cost"></textarea>
+        </div>
+		<div><input type="submit" class="button"></div>
+	</form>
+</div>
+<div><button class="button"><a href="/edit/orders">Вернуться к списку заказов</a></button></div>

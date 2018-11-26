@@ -1,0 +1,28 @@
+<head>
+	<title>Заказы</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+<div><button class="button"><a href="/add_order">Добавить заказ</a></button></div>
+<div class="form">
+	<form action="/delete_all_orders" method="post">
+		<div><input type="submit" class="button" value="Удалить все заказы"></div>
+	</form>
+</div>
+<div><button class="button"><a href="/edit">Вернуться ко всем записям</a></button></div>
+{{range .}}
+<div class="records">
+	<div class="fieldName">ID:</div>
+    <div class="record">{{.ID}}</div>
+    <div class="fieldName">Статус:</div>
+	<div class="record">{{.State}}</div>
+	<div class="fieldName">Товары:</div>
+	<div class="record">{{.Units}}</div>
+	<div class="fieldName">ID пользователя:</div>
+    <div class="record">{{.UserID}}</div>
+	<div class="fieldName">Стоимость:</div>
+	<div class="record">{{.Cost}}</div>
+	<div class="fieldName">Дата:</div>
+	<div class="record">{{.Date}}</div>
+	<button class="button"><a href="/edit/orders/{{.ID}}">Редактировать</a></button>
+</div>
+{{end}}

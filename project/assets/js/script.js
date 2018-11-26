@@ -75,3 +75,34 @@ function HideUnits() {
     document.getElementById("videocards").style.display = "none";
     document.getElementById("rams").style.display = "none";
 }
+
+function ActiveCheckbox() {
+    var state = document.getElementById("state").innerHTML;
+    if (state == "Выполняется"){
+        document.getElementById("state_1").checked = true;
+    }
+    if (state == "Исполнен"){
+        document.getElementById("state_2").checked = true;
+    }
+    if (state == "Отменён"){
+        document.getElementById("state_3").checked = true;
+    }
+}
+
+function OneCheckbox(checkbox) {
+    if (checkbox.name == "state_1")
+    {
+        document.getElementById("state_2").checked = false;
+        document.getElementById("state_3").checked = false;
+    }
+    if (checkbox.name == "state_2")
+    {
+        document.getElementById("state_1").checked = false;
+        document.getElementById("state_3").checked = false;
+    }
+    if (checkbox.name == "state_3")
+    {
+        document.getElementById("state_1").checked = false;
+        document.getElementById("state_2").checked = false;
+    }
+}

@@ -83,6 +83,11 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/add_ram", addRAM)
 
 	r.HandleFunc("/edit/orders", orders)
+	r.HandleFunc("/edit/orders/{id}", editOrder)
+	r.HandleFunc("/update_order", updateOrder)
+	r.HandleFunc("/add_order", addOrder)
+	r.HandleFunc("/delete_order", delOrder)
+	r.HandleFunc("/delete_all_orders", delAllOrders)
 
 	r.HandleFunc("/categories", showCategories)
 

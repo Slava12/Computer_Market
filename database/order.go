@@ -1,24 +1,19 @@
 package database
 
-import "encoding/json"
-
 // Order хранит данные о характеристике
 type Order struct {
 	ID     int
-	Units  []string
+	State  string
+	Units  string
 	UserID int
 	Cost   int
 	Date   string
 }
 
 // NewOrder добавляет новый заказ в базу данных
-func NewOrder(units []string, userID int, cost int, date string) (id int, err error) {
-	unitsJSON, errMarshal := json.Marshal(units)
-	if errMarshal != nil {
-		return 0, errMarshal
-	}
-	err = db.QueryRow("insert into orders (units, user_id, cost, date) values ($1, $2, $3, $4) returning id",
-		unitsJSON, userID, cost, date).Scan(&id)
+func NewOrder(state string, units string, userID int, cost int, date string) (id int, err error) {
+	err = db.QueryRow("insert into orders (state, units, user_id, cost, date) values ($1, $2, $3, $4, $5) returning id",
+		state, units, userID, cost, date).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -47,13 +42,8 @@ func DelAllOrders() error {
 func GetOrder(ID int) (Order, error) {
 	row := db.QueryRow("select * from orders where id=$1", ID)
 	order := Order{}
-	var units string
-	err := row.Scan(&order.ID, &units, &order.UserID, &order.Cost, &order.Date)
+	err := row.Scan(&order.ID, &order.State, &order.Units, &order.UserID, &order.Cost, &order.Date)
 	if err != nil {
-		return Order{}, err
-	}
-	errU := json.Unmarshal([]byte(units), &order.Units)
-	if errU != nil {
 		return Order{}, err
 	}
 	return order, nil
@@ -67,33 +57,30 @@ func GetAllOrders() ([]Order, error) {
 	}
 	orders := []Order{}
 	order := Order{}
-	units := []string{}
-	unit := ""
 	for rows.Next() {
-		err = rows.Scan(&order.ID, &units, &order.UserID, &order.Cost, &order.Date)
+		err = rows.Scan(&order.ID, &order.State, &order.Units, &order.UserID, &order.Cost, &order.Date)
 		if err != nil {
 			return []Order{}, err
 		}
 		orders = append(orders, order)
-		units = append(units, unit)
-	}
-	for i := 0; i < len(orders); i++ {
-		errU := json.Unmarshal([]byte(units[i]), &orders[i].Units)
-		if errU != nil {
-			return []Order{}, err
-		}
 	}
 	return orders, nil
 }
 
 // UpdateOrder обновляет значения полей заказа
-func UpdateOrder(ID int, units []string, userID int, cost int, date string) error {
-	unitsJSON, errMarshal := json.Marshal(units)
-	if errMarshal != nil {
-		return errMarshal
+func UpdateOrder(ID int, state string, units string, userID int, cost int, date string) error {
+	_, err := db.Exec("update orders set state = $1, units = $2, user_id = $3, cost = $4, date = $5 where id = $6",
+		state, units, userID, cost, date, ID)
+	if err != nil {
+		return err
 	}
-	_, err := db.Exec("update orders set units = $1, user_id = $2, cost = $3, date = $4 where id = $5",
-		unitsJSON, userID, cost, date, ID)
+	return nil
+}
+
+// UpdateOrderState обновляет статус заказа
+func UpdateOrderState(ID int, state string) error {
+	_, err := db.Exec("update orders set state = $1 where id = $2",
+		state, ID)
 	if err != nil {
 		return err
 	}
