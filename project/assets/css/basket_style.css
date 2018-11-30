@@ -1,0 +1,29 @@
+.buttonB {
+    margin-top: 40px;
+}
+
+.buttonB a {
+	width: 200px;
+	border-radius: 3px;
+}
+
+.cost {
+    width: 200px;
+    margin: 0 auto;
+    text-align: center;
+    font-weight: bold;
+    font-size: 22pt;
+}
+
+.buttonOffset {
+    margin: 40px auto;
+    width:300px;
+    text-align: center;
+}
+
+.button {
+    float: none;
+    padding-top: 0px;
+    margin: 0;
+    height: 50px;
+}

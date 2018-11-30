@@ -4,8 +4,10 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Slava12/Computer_Market/database"
+	"github.com/Slava12/Computer_Market/errortemplate"
 	"github.com/Slava12/Computer_Market/logger"
 	"github.com/gorilla/mux"
 )
@@ -15,6 +17,7 @@ func showBasket(w http.ResponseWriter, r *http.Request) {
 	basket, _ := session.Values["basket"].(string)
 	units := strings.Split(basket, ";")
 	data := make([]Data, len(units)-1)
+	cost := 0
 	for i := range units {
 		if i == len(units)-1 { // Последняя запись всегда пустая
 			break
@@ -38,6 +41,12 @@ func showBasket(w http.ResponseWriter, r *http.Request) {
 		data[i].Price = unit.Price
 		data[i].Link = "/remove_from_basket/" + strconv.Itoa(unit.ID)
 		data[i].Text = "Убрать из корзины"
+		unitNumber, errString := strconv.Atoi(unitInfo[1])
+		if errString != nil {
+			logger.Warn(errString, "Не удалось конвертировать строку в число!")
+			return
+		}
+		cost += unit.Price * unitNumber
 	}
 	dataFull := DataFull{}
 	dataFull.ShowCategory = false
@@ -56,11 +65,38 @@ func showBasket(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
 		if len(units) != 1 {
-			err = tpl.ExecuteTemplate(w, "basket.html", nil)
+			execute(w, "header.html", "Общая стоимость")
+			err = tpl.ExecuteTemplate(w, "basket.html", cost)
 			if err != nil {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 			}
 		}
+	}
+	if r.Method == "POST" {
+		email, _ := session.Values["login"].(string)
+		user, err := database.GetUserByEmail(email)
+		if err != nil {
+			logger.Warn(err, "Не удалось получить запись о пользователе ", email, "!")
+			return
+		}
+		temp := time.Now().String()
+		tempStrings := strings.Split(temp, ".")
+		tempTime := tempStrings[0]
+		tempStrings = strings.Split(tempStrings[1], " ")
+		tempTime += " " + tempStrings[1] + " " + tempStrings[2]
+		date := tempTime
+		id, err := database.NewOrder("Выполняется", basket, user.ID, cost, date)
+		if err != nil {
+			logger.Warn(err, "Не удалось добавить новый заказ!")
+			message := "Приносим свои извинения. Не удалось добавить новый заказ!"
+			errorMessage := errortemplate.Error{Message: message, Link: "/basket"}
+			execute(w, "error.html", errorMessage)
+			return
+		}
+		logger.Info("Добавление заказа ", id, " прошло успешно.")
+		session.Values["basket"] = ""
+		session.Save(r, w)
+		http.Redirect(w, r, "/orders", 302)
 	}
 }
 

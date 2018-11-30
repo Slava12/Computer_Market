@@ -37,6 +37,7 @@ body {
 
 .buttonB a {
 	width: 200px;
+	border-radius: 3px;
 }
 
 .form {

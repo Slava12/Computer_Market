@@ -1,3 +1,8 @@
-<link rel="stylesheet" type="text/css" href="../../assets/css/profile_style.css">
-<div style="height:50px"></div>
+<link rel="stylesheet" type="text/css" href="../../assets/css/basket_style.css">
+<div class="cost">{{.}} руб.</div>
 <div class="buttonB"><a href="/clear_basket">Очистить корзину</a></div>
+<div class="form">
+    <form action="/basket" method="post">
+        <div class="buttonOffset"><input type="submit" class="button" value="Оформить заказ"></div>
+    </form>
+</div>

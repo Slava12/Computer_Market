@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/Slava12/Computer_Market/database"
-	"github.com/Slava12/Computer_Market/errortemplate"
 	"github.com/Slava12/Computer_Market/logger"
 )
 
@@ -62,10 +61,4 @@ func changeProfile(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Запись пользователя ", user.ID, " обновлена успешно.")
 		http.Redirect(w, r, "/profile", 302)
 	}
-}
-
-func showOrders(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
-	execute(w, "error.html", errorMessage)
 }
