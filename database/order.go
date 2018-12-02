@@ -49,6 +49,24 @@ func GetOrder(ID int) (Order, error) {
 	return order, nil
 }
 
+// GetOrdersByUserID возвращает данные о заказах по ID пользователя
+func GetOrdersByUserID(userID int) ([]Order, error) {
+	rows, err := db.Query("select * from orders where user_id=$1", userID)
+	if err != nil {
+		return []Order{}, err
+	}
+	orders := []Order{}
+	order := Order{}
+	for rows.Next() {
+		err = rows.Scan(&order.ID, &order.State, &order.Units, &order.UserID, &order.Cost, &order.Date)
+		if err != nil {
+			return []Order{}, err
+		}
+		orders = append(orders, order)
+	}
+	return orders, nil
+}
+
 // GetAllOrders возвращает данные обо всех заказах
 func GetAllOrders() ([]Order, error) {
 	rows, err := db.Query("select * from orders order by id asc")

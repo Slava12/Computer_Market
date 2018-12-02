@@ -165,6 +165,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Пользователь ", login, " вышел из аккаунта.")
 
 	session.Values["authenticated"] = false
+	session.Values["login"] = ""
 	session.Save(r, w)
 	http.Redirect(w, r, "/index", 302)
 }

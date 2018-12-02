@@ -1,0 +1,13 @@
+<head>
+        <link rel="stylesheet" type="text/css" href="../../assets/css/common_style.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/orders_style.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/show_style.css">
+</head>
+{{range .}}
+<div class="order">
+	<div class="state">Статус: {{.State}}</div>
+    <div class="id">ID: {{.ID}}</div>
+    <div class="cost">Сумма: {{.Cost}} руб.</div>
+    <div class="buttonA"><a href="/orders/{{.ID}}">Просмотреть</a></button></div>
+</div>
+{{end}}

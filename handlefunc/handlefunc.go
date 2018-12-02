@@ -39,6 +39,7 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/profile/change", changeProfile)
 
 	r.HandleFunc("/orders", showOrders)
+	r.HandleFunc("/orders/{id}", showOrder)
 
 	r.HandleFunc("/basket", showBasket)
 	r.HandleFunc("/add_basket/{id}", addToBasket)
