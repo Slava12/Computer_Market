@@ -108,6 +108,8 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/constructor/clear", clearConstructor)
 	r.HandleFunc("/constructor/order", orderConstructor)
 
+	r.HandleFunc("/make", makePairs)
+
 	port := configFile.HTTP.Port
 
 	filesFolder = configFile.Files.Folder
