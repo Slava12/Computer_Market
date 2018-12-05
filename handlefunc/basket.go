@@ -12,6 +12,38 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Record хранит данные о товаре
+type Record struct {
+	ID    int
+	Count int
+}
+
+func splitBasket(basket string) []Record {
+	units := strings.Split(basket, ";")
+	records := []Record{}
+	record := Record{}
+	for i := range units {
+		if i == len(units)-1 { // Последняя запись всегда пустая
+			break
+		}
+		unitInfo := strings.Split(units[i], ":")
+		id, err := strconv.Atoi(unitInfo[0])
+		if err != nil {
+			logger.Warn(err, "Не удалось конвертировать строку в число!")
+			return []Record{}
+		}
+		count, err := strconv.Atoi(unitInfo[1])
+		if err != nil {
+			logger.Warn(err, "Не удалось конвертировать строку в число!")
+			return []Record{}
+		}
+		record.ID = id
+		record.Count = count
+		records = append(records, record)
+	}
+	return records
+}
+
 func showBasket(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 	basket, _ := session.Values["basket"].(string)
@@ -60,16 +92,10 @@ func showBasket(w http.ResponseWriter, r *http.Request) {
 		} else {
 			execute(w, "header.html", "Корзина")
 		}
-		err := tpl.ExecuteTemplate(w, "show_units.html", dataFull)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "show_units.html", dataFull)
 		if len(units) != 1 {
 			execute(w, "header.html", "Общая стоимость")
-			err = tpl.ExecuteTemplate(w, "basket.html", cost)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-			}
+			execute(w, "basket.html", cost)
 		}
 	}
 	if r.Method == "POST" {
@@ -94,6 +120,14 @@ func showBasket(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		logger.Info("Добавление заказа ", id, " прошло успешно.")
+		records := splitBasket(basket)
+		if len(records) > 1 {
+			idList := []int{}
+			for _, record := range records {
+				idList = append(idList, record.ID)
+			}
+			createPairs(idList)
+		}
 		session.Values["basket"] = ""
 		session.Save(r, w)
 		http.Redirect(w, r, "/orders", 302)

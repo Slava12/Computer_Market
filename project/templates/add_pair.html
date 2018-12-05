@@ -1,0 +1,22 @@
+<head>
+	<title>Добавление пары товаров</title>
+	<link rel="stylesheet" type="text/css" href="../../assets/css/records_style.css">
+</head>
+<div class="form">
+	<form action="/add_pair" method="post">
+		<div class=elem">
+            <div>ID первого товара</div>
+            <textarea name="one"></textarea>
+        </div>
+        <div class=elem">
+            <div>ID второго товара</div>
+            <textarea name="two"></textarea>
+        </div>
+        <div class=elem">
+            <div>Количество</div>
+            <textarea name="count"></textarea>
+        </div>
+		<div><input type="submit" class="button"></div>
+	</form>
+</div>
+<div><button class="button"><a href="/edit/pairs">Вернуться к списку пар товаров</a></button></div>

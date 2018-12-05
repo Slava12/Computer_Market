@@ -116,7 +116,7 @@ func addOrder(w http.ResponseWriter, r *http.Request) {
 			logger.Warn(err, "Не удалось добавить новый заказ!")
 			return
 		}
-		logger.Info("Добавление заказа", id, "прошло успешно.")
+		logger.Info("Добавление заказа ", id, " прошло успешно.")
 		http.Redirect(w, r, "/edit/orders", 302)
 	}
 }

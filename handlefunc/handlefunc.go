@@ -90,6 +90,13 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/delete_order", delOrder)
 	r.HandleFunc("/delete_all_orders", delAllOrders)
 
+	r.HandleFunc("/edit/pairs", pairs)
+	r.HandleFunc("/edit/pairs/{id}", editPair)
+	r.HandleFunc("/update_pair", updatePair)
+	r.HandleFunc("/add_pair", addPair)
+	r.HandleFunc("/delete_pair", delPair)
+	r.HandleFunc("/delete_all_pairs", delAllPairs)
+
 	r.HandleFunc("/categories", showCategories)
 
 	r.HandleFunc("/categories/processors", showProcessors)
@@ -108,7 +115,7 @@ func InitHTTP(configFile config.Config) {
 	r.HandleFunc("/constructor/clear", clearConstructor)
 	r.HandleFunc("/constructor/order", orderConstructor)
 
-	r.HandleFunc("/make", makePairs)
+	r.HandleFunc("/make", createPairsFromAllUnits)
 
 	port := configFile.HTTP.Port
 
