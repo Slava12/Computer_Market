@@ -1,0 +1,46 @@
+.elemP {
+	width: 900px;
+	margin: 0 auto;
+	border: 1px solid #cccccc;
+	background-color: white;
+}
+.elemP div {
+    display: inline-block;
+    padding: 10px;
+}
+.fieldName{
+    width: 300px;
+    vertical-align: middle;
+}
+.field {
+    width: 550px;
+    border-left: 1px solid #ccc;
+    vertical-align: middle;
+}
+
+.price1 {
+    font-weight: bold;
+    font-size: 16pt;
+}
+
+.buttonU {
+    background: #8ac858;
+    border: 0px;
+    border-radius: 3px;
+    height: 30px;
+    color: white;
+    width: 170px;
+    margin: 20px auto;
+}
+
+.buttonU:hover {
+    background: #6fb03a;
+  }
+
+  .buttonU a {
+    padding: 5px 10px;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+    vertical-align: -5px;
+  }

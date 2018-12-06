@@ -1,6 +1,16 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="../../assets/css/show_style.css">
 	<link rel="stylesheet" type="text/css" href="../../assets/css/common_style.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/unit_style.css">
 </head>
-<div class="unit">
+{{range .Features}}
+		<div class="elemP">
+			<div class="fieldName">{{.Name}}</div>
+			<div class="field">{{.Value}}</div>
+		</div>
+{{end}}
+<div class="elemP">
+	<div class="fieldName">Цена</div>
+	<div class="field price1">{{.Price}} руб</div>
 </div>
+<div class="buttonU"><a href="/add_basket/{{.ID}}">Добавить в корзину</a></button></div>
