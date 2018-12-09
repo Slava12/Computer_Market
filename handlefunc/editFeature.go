@@ -18,10 +18,7 @@ func features(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "features.html", features)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "features.html", features)
 	}
 }
 
@@ -40,10 +37,7 @@ func showFeature(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "feature.html", feature)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "feature.html", feature)
 	}
 }
 
@@ -65,10 +59,7 @@ func updateFeature(w http.ResponseWriter, r *http.Request) {
 func addFeature(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "add_feature.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "add_feature.html", nil)
 	}
 	if r.Method == "POST" {
 		result := database.Feature{}
@@ -78,10 +69,7 @@ func addFeature(w http.ResponseWriter, r *http.Request) {
 			logger.Warn(errAdd, "Не удалось добавить новую характеристику!")
 			message := errortemplate.GenerateMessage(errAdd)
 			errorMessage := errortemplate.Error{Message: message, Link: "/add_feature"}
-			err := tpl.ExecuteTemplate(w, "error.html", errorMessage)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-			}
+			execute(w, "error.html", errorMessage)
 			return
 		}
 		logger.Info("Добавление характеристики ", id, " прошло успешно.")

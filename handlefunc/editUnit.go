@@ -21,10 +21,7 @@ func units(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "units.html", units)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "units.html", units)
 	}
 }
 
@@ -43,10 +40,7 @@ func editUnit(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "unit.html", unit)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "unit.html", unit)
 	}
 }
 
@@ -84,10 +78,7 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "add_unit.html", categories)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "add_unit.html", categories)
 	}
 	if r.Method == "POST" {
 		result := database.Unit{}
@@ -112,10 +103,7 @@ func addUnit(w http.ResponseWriter, r *http.Request) {
 			logger.Warn(errAdd, "Не удалось добавить новый товар!")
 			message := errortemplate.GenerateMessage(errAdd)
 			errorMessage := errortemplate.Error{Message: message, Link: "/add_unit"}
-			err := tpl.ExecuteTemplate(w, "error.html", errorMessage)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-			}
+			execute(w, "error.html", errorMessage)
 			return
 		}
 		logger.Info("Добавление товара ", id, " прошло успешно.")

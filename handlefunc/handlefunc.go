@@ -170,10 +170,7 @@ func menu(w http.ResponseWriter, r *http.Request) {
 		AccessLevel: accessLevel,
 	}
 	if r.Method == "GET" {
-		err := tpl.ExecuteTemplate(w, "menu.html", data)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "menu.html", data)
 	}
 }
 
@@ -187,10 +184,7 @@ func showCategories(w http.ResponseWriter, r *http.Request) {
 func edit(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "edit.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "edit.html", nil)
 	}
 }
 

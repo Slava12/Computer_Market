@@ -17,10 +17,7 @@ func users(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "users.html", users)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "users.html", users)
 	}
 }
 
@@ -39,10 +36,7 @@ func showUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "user.html", user)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "user.html", user)
 	}
 }
 
@@ -73,10 +67,7 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 func addUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "add_user.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "add_user.html", nil)
 	}
 	if r.Method == "POST" {
 		result := database.User{}

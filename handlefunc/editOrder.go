@@ -19,10 +19,7 @@ func orders(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "orders.html", orders)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "orders.html", orders)
 	}
 }
 
@@ -41,10 +38,7 @@ func editOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "order.html", order)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "order.html", order)
 	}
 }
 
@@ -86,10 +80,7 @@ func updateOrder(w http.ResponseWriter, r *http.Request) {
 func addOrder(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "add_order.html", nil)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "add_order.html", nil)
 	}
 	if r.Method == "POST" {
 		result := database.Order{}

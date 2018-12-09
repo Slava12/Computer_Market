@@ -47,22 +47,13 @@ func splitBasket(basket string) []Record {
 func showBasket(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 	basket, _ := session.Values["basket"].(string)
-	units := strings.Split(basket, ";")
-	data := make([]Data, len(units)-1)
 	cost := 0
-	for i := range units {
-		if i == len(units)-1 { // Последняя запись всегда пустая
-			break
-		}
-		unitInfo := strings.Split(units[i], ":")
-		unitID, errString := strconv.Atoi(unitInfo[0])
-		if errString != nil {
-			logger.Warn(errString, "Не удалось конвертировать строку в число!")
-			return
-		}
-		unit, err := database.GetUnit(unitID)
+	records := splitBasket(basket)
+	data := make([]Data, len(records))
+	for i, record := range records {
+		unit, err := database.GetUnit(record.ID)
 		if err != nil {
-			logger.Warn(err, "Не удалось получить запись о товаре ", unitID, "!")
+			logger.Warn(err, "Не удалось получить запись о товаре ", record.ID, "!")
 			return
 		}
 		if len(unit.Pictures) > 0 {
@@ -73,12 +64,7 @@ func showBasket(w http.ResponseWriter, r *http.Request) {
 		data[i].Price = unit.Price
 		data[i].Link = "/remove_from_basket/" + strconv.Itoa(unit.ID)
 		data[i].Text = "Убрать из корзины"
-		unitNumber, errString := strconv.Atoi(unitInfo[1])
-		if errString != nil {
-			logger.Warn(errString, "Не удалось конвертировать строку в число!")
-			return
-		}
-		cost += unit.Price * unitNumber
+		cost += unit.Price * record.Count
 	}
 	dataFull := DataFull{}
 	dataFull.ShowCategory = false
@@ -87,13 +73,13 @@ func showBasket(w http.ResponseWriter, r *http.Request) {
 	dataFull.Data = data
 	if r.Method == "GET" {
 		menu(w, r)
-		if len(units) == 1 {
+		if len(records) == 0 {
 			execute(w, "header.html", "Корзина пуста")
 		} else {
 			execute(w, "header.html", "Корзина")
 		}
 		execute(w, "show_units.html", dataFull)
-		if len(units) != 1 {
+		if len(records) > 0 {
 			execute(w, "header.html", "Общая стоимость")
 			execute(w, "basket.html", cost)
 		}

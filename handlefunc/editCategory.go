@@ -18,10 +18,7 @@ func categories(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "categories.html", categories)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "categories.html", categories)
 	}
 }
 
@@ -63,10 +60,7 @@ func showCategory(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err := tpl.ExecuteTemplate(w, "category.html", data)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "category.html", data)
 	}
 }
 
@@ -111,10 +105,7 @@ func addCategory(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "GET" {
 		menu(w, r)
-		err = tpl.ExecuteTemplate(w, "add_category.html", features)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		execute(w, "add_category.html", features)
 	}
 	if r.Method == "POST" {
 		result := database.Category{}
@@ -137,10 +128,7 @@ func addCategory(w http.ResponseWriter, r *http.Request) {
 			logger.Warn(errAdd, "Не удалось добавить новую категорию!")
 			message := errortemplate.GenerateMessage(errAdd)
 			errorMessage := errortemplate.Error{Message: message, Link: "/add_category"}
-			err := tpl.ExecuteTemplate(w, "error.html", errorMessage)
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-			}
+			execute(w, "error.html", errorMessage)
 			return
 		}
 		logger.Info("Добавление категории ", id, " прошло успешно.")

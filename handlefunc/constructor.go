@@ -27,7 +27,7 @@ func showConstructor(w http.ResponseWriter, r *http.Request) {
 	nothingProcessorSelected := makeNothingData("../../assets/images/nothing_processor.jpg", "Процессор не выбран")
 	nothingMotherboardSelected := makeNothingData("../../assets/images/nothing_motherboard.png", "Материнская плата не выбрана")
 	nothingVideocardSelected := makeNothingData("../../assets/images/nothing_videocard.jpg", "Видеокарта не выбрана")
-	nothingRamSelected := makeNothingData("../../assets/images/nothing_ram.jpg", "Оперативная память не выбрана")
+	nothingRAMSelected := makeNothingData("../../assets/images/nothing_ram.jpg", "Оперативная память не выбрана")
 
 	processorSelected := makeSingleData(processor.ID, "processors", "remove_constructor", "Убрать товар")
 	motherboardSelected := makeSingleData(motherboard.ID, "motherboards", "remove_constructor", "Убрать товар")
@@ -59,7 +59,7 @@ func showConstructor(w http.ResponseWriter, r *http.Request) {
 		if ram.Name != "" {
 			execute(w, "show_unit.html", ramSelected)
 		} else {
-			execute(w, "show_nothing.html", nothingRamSelected)
+			execute(w, "show_nothing.html", nothingRAMSelected)
 		}
 		execute(w, "two_buttons.html", nil)
 		execute(w, "header.html", "Доступные компоненты")
