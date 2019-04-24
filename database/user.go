@@ -9,12 +9,13 @@ type User struct {
 	Password    string
 	FirstName   string
 	SecondName  string
+	Phone       string
 }
 
 // NewUser добавляет нового пользователя в базу данных
-func NewUser(accessLevel int, confirmed bool, email string, password string, firstName string, secondName string) (id int, err error) {
-	err = db.QueryRow("insert into users (access_level, confirmed, email, password, first_name, second_name) values ($1, $2, $3, $4, $5, $6) returning id",
-		accessLevel, confirmed, email, password, firstName, secondName).Scan(&id)
+func NewUser(accessLevel int, confirmed bool, email string, password string, firstName string, secondName string, phone string) (id int, err error) {
+	err = db.QueryRow("insert into users (access_level, confirmed, email, password, first_name, second_name, phone) values ($1, $2, $3, $4, $5, $6, $7) returning id",
+		accessLevel, confirmed, email, password, firstName, secondName, phone).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -43,7 +44,7 @@ func DelAllUsers() error {
 func GetUser(ID int) (User, error) {
 	row := db.QueryRow("select * from users where id=$1", ID)
 	user := User{}
-	err := row.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName)
+	err := row.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName, &user.Phone)
 	if err != nil {
 		return User{}, err
 	}
@@ -54,7 +55,7 @@ func GetUser(ID int) (User, error) {
 func GetUserByEmail(email string) (User, error) {
 	row := db.QueryRow("select * from users where email=$1", email)
 	user := User{}
-	err := row.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName)
+	err := row.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName, &user.Phone)
 	if err != nil {
 		return User{}, err
 	}
@@ -70,7 +71,7 @@ func GetAllUsers() ([]User, error) {
 	users := []User{}
 	user := User{}
 	for rows.Next() {
-		err = rows.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName)
+		err = rows.Scan(&user.ID, &user.AccessLevel, &user.Confirmed, &user.Email, &user.Password, &user.FirstName, &user.SecondName, &user.Phone)
 		if err != nil {
 			return []User{}, err
 		}
@@ -133,10 +134,19 @@ func UpdateUserSecondName(ID int, secondName string) error {
 	return nil
 }
 
+// UpdateUserPhone обновляет значение телефона
+func UpdateUserPhone(ID int, phone string) error {
+	_, err := db.Exec("update users set phone = $1 where id = $2", phone, ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // UpdateUser обновляет значения полей пользователя
-func UpdateUser(ID int, accessLevel int, confirmed bool, email string, password string, firstName string, secondName string) error {
-	_, err := db.Exec("update users set access_level = $1, confirmed = $2, email = $3, password = $4, first_name = $5, second_name = $6 where id = $7",
-		accessLevel, confirmed, email, password, firstName, secondName, ID)
+func UpdateUser(ID int, accessLevel int, confirmed bool, email string, password string, firstName string, secondName string, phone string) error {
+	_, err := db.Exec("update users set access_level = $1, confirmed = $2, email = $3, password = $4, first_name = $5, second_name = $6, phone = $7 where id = $8",
+		accessLevel, confirmed, email, password, firstName, secondName, phone, ID)
 	if err != nil {
 		return err
 	}

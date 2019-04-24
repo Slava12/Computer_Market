@@ -78,6 +78,7 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("login")
 		password := r.FormValue("password")
 		name := r.FormValue("name")
+		phone := "00000000000"
 
 		_, err := database.GetUserByEmail(email)
 		if err == nil {
@@ -87,7 +88,7 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 			execute(w, "error.html", errorMessage)
 			return
 		}
-		id, err := database.NewUser(0, false, email, password, name, "")
+		id, err := database.NewUser(0, false, email, password, name, "", phone)
 		if err != nil {
 			logger.Warn(err, "Не удалось добавить нового пользователя!")
 			return

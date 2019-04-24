@@ -106,6 +106,8 @@ func showBasket(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		logger.Info("Добавление заказа ", id, " прошло успешно.")
+		adress := "https://gateway.api.sc/get/?user=79208788087&pwd=soBH5UdzEu&sadr=dupelmarket&dadr=" + user.Phone + "&text=%D0%97%D0%B0%D0%BA%D0%B0%D0%B7%20%D1%83%D1%81%D0%BF%D0%B5%D1%88%D0%BD%D0%BE%20%D0%BE%D1%84%D0%BE%D1%80%D0%BC%D0%BB%D0%B5%D0%BD.%20%D0%9D%D0%BE%D0%BC%D0%B5%D1%80%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0:%20" + strconv.Itoa(id)
+		http.Get(adress)
 		records := splitBasket(basket)
 		if len(records) > 1 {
 			idList := []int{}

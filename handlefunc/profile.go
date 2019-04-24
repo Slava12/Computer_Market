@@ -53,7 +53,8 @@ func changeProfile(w http.ResponseWriter, r *http.Request) {
 		firstName := r.FormValue("firstName")
 		secondName := r.FormValue("secondName")
 		password := r.FormValue("password")
-		err := database.UpdateUser(user.ID, user.AccessLevel, user.Confirmed, user.Email, password, firstName, secondName)
+		phone := r.FormValue("phone")
+		err := database.UpdateUser(user.ID, user.AccessLevel, user.Confirmed, user.Email, password, firstName, secondName, phone)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить запись пользователя ", user.ID, "!")
 			return

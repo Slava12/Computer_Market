@@ -54,7 +54,8 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 		result.Password = r.FormValue("password")
 		result.FirstName = r.FormValue("firstName")
 		result.SecondName = r.FormValue("secondName")
-		err := database.UpdateUser(result.ID, result.AccessLevel, result.Confirmed, result.Email, result.Password, result.FirstName, result.SecondName)
+		result.Phone = r.FormValue("phone")
+		err := database.UpdateUser(result.ID, result.AccessLevel, result.Confirmed, result.Email, result.Password, result.FirstName, result.SecondName, result.Phone)
 		if err != nil {
 			logger.Warn(err, "Не удалось обновить запись пользователя ", result.ID, "!")
 			return
@@ -81,7 +82,8 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 		result.Password = r.FormValue("password")
 		result.FirstName = r.FormValue("firstName")
 		result.SecondName = r.FormValue("secondName")
-		id, err := database.NewUser(result.AccessLevel, result.Confirmed, result.Email, result.Password, result.FirstName, result.SecondName)
+		result.Phone = r.FormValue("phone")
+		id, err := database.NewUser(result.AccessLevel, result.Confirmed, result.Email, result.Password, result.FirstName, result.SecondName, result.Phone)
 		if err != nil {
 			logger.Warn(err, "Не удалось добавить нового пользователя!")
 			return
