@@ -8,7 +8,6 @@ import (
 
 	"github.com/Slava12/Computer_Market/config"
 	"github.com/Slava12/Computer_Market/database"
-	"github.com/Slava12/Computer_Market/errortemplate"
 	"github.com/Slava12/Computer_Market/logger"
 	"github.com/gorilla/mux"
 )
@@ -16,6 +15,7 @@ import (
 var (
 	tpl         *template.Template
 	filesFolder string
+	currentPage string
 )
 
 // InitHTTP инициализирует сетевые функции приложения
@@ -40,6 +40,10 @@ func InitHTTP(configFile config.Config) {
 
 	r.HandleFunc("/orders", showOrders)
 	r.HandleFunc("/orders/{id}", showOrder)
+
+	r.HandleFunc("/payment", pay)
+	r.HandleFunc("/success", success)
+	r.HandleFunc("/fail", fail)
 
 	r.HandleFunc("/basket", showBasket)
 	r.HandleFunc("/add_basket/{id}", addToBasket)
@@ -139,13 +143,43 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+var searchUnits []database.Unit
+var isSearchResult bool
+
 func search(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/index"}
-	execute(w, "error.html", errorMessage)
+	/*data := struct {
+		IsSearchResult bool
+		SearchUnits    []database.Unit
+	}{
+		IsSearchResult: isSearchResult,
+		SearchUnits:    searchUnits,
+	}*/
+	data := make([]Data, len(searchUnits))
+	for i := 0; i < len(searchUnits); i++ {
+		if len(searchUnits[i].Pictures) > 0 {
+			data[i].Picture = searchUnits[i].Pictures[0]
+		}
+		data[i].LinkUnit = "/units/" + strconv.Itoa(searchUnits[i].ID)
+		data[i].Name = searchUnits[i].Name
+		data[i].Price = searchUnits[i].Price
+		data[i].Link = "/add_basket/" + strconv.Itoa(searchUnits[i].ID)
+		data[i].Text = "Добавить в корзину"
+	}
+	if r.Method == "GET" {
+		menu(w, r)
+		execute(w, "search.html", data)
+		isSearchResult = false
+	}
+	if r.Method == "POST" {
+		search := r.FormValue("search")
+		searchUnits, _ = database.GetUnits(search)
+		isSearchResult = true
+		http.Redirect(w, r, "/search", 302)
+	}
 }
 
 func menu(w http.ResponseWriter, r *http.Request) {
+	currentPage = r.URL.String()
 	session, _ := store.Get(r, "cookie-name")
 	isLogged, _ := session.Values["authenticated"].(bool)
 	email, _ := session.Values["login"].(string)

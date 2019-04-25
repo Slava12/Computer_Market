@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/Slava12/Computer_Market/database"
-	"github.com/Slava12/Computer_Market/errortemplate"
 	"github.com/Slava12/Computer_Market/logger"
 	"github.com/gorilla/mux"
 )
@@ -42,22 +41,22 @@ func showConstructor(w http.ResponseWriter, r *http.Request) {
 		menu(w, r)
 		execute(w, "header.html", "Выбранная конфигурация")
 		if processor.Name != "" {
-			execute(w, "show_unit.html", processorSelected)
+			execute(w, "show_unit_constructor.html", processorSelected)
 		} else {
 			execute(w, "show_nothing.html", nothingProcessorSelected)
 		}
 		if motherboard.Name != "" {
-			execute(w, "show_unit.html", motherboardSelected)
+			execute(w, "show_unit_constructor.html", motherboardSelected)
 		} else {
 			execute(w, "show_nothing.html", nothingMotherboardSelected)
 		}
 		if videocard.Name != "" {
-			execute(w, "show_unit.html", videocardSelected)
+			execute(w, "show_unit_constructor.html", videocardSelected)
 		} else {
 			execute(w, "show_nothing.html", nothingVideocardSelected)
 		}
 		if ram.Name != "" {
-			execute(w, "show_unit.html", ramSelected)
+			execute(w, "show_unit_constructor.html", ramSelected)
 		} else {
 			execute(w, "show_nothing.html", nothingRAMSelected)
 		}
@@ -143,7 +142,31 @@ func clearConstructor(w http.ResponseWriter, r *http.Request) {
 }
 
 func orderConstructor(w http.ResponseWriter, r *http.Request) {
-	message := "Приносим свои извинения, работа над страницей ещё не завершена."
-	errorMessage := errortemplate.Error{Message: message, Link: "/constructor"}
-	execute(w, "error.html", errorMessage)
+	session, _ := store.Get(r, "cookie-name")
+	session.Values["basket"] = ""
+	ids := make([]int, 0)
+	if session.Values["processor"] != "" {
+		ids = append(ids, session.Values["processor"].(int))
+	}
+	if session.Values["motherboard"] != "" {
+		ids = append(ids, session.Values["motherboard"].(int))
+	}
+	if session.Values["videocard"] != "" {
+		ids = append(ids, session.Values["videocard"].(int))
+	}
+	if session.Values["ram"] != "" {
+		ids = append(ids, session.Values["ram"].(int))
+	}
+	basket := ""
+	for _, id := range ids {
+		basket += strconv.Itoa(id) + ":1;"
+	}
+	session.Values["basket"] = basket
+
+	session.Values["processor"] = ""
+	session.Values["motherboard"] = ""
+	session.Values["videocard"] = ""
+	session.Values["ram"] = ""
+	session.Save(r, w)
+	http.Redirect(w, r, "/basket", 302)
 }

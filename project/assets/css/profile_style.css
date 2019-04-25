@@ -42,7 +42,7 @@ body {
 
 .form {
 	width: 500px;
-	height: 400px;
+	height: 500px;
 	background-color: white;
 	margin: 50px auto;
 	text-align: center;
@@ -67,6 +67,7 @@ body {
 
 .button {
 	margin-top: 35px;
+	margin-bottom: 35px;
 }
 
 .elem div {

@@ -163,3 +163,38 @@ func UpdateUnit(ID int, name string, categoryID int, quantity int, price int, di
 	}
 	return nil
 }
+
+// GetUnits возвращает данные обо всех товарах
+func GetUnits(str string) ([]Unit, error) {
+	formattedStr := "%" + str + "%"
+	rows, err := db.Query("select * from units where lower(name) like lower($1) order by id asc", formattedStr)
+	if err != nil {
+		return []Unit{}, err
+	}
+	units := []Unit{}
+	unit := Unit{}
+	features := []string{}
+	feature := ""
+	pictures := []string{}
+	picture := ""
+	for rows.Next() {
+		err = rows.Scan(&unit.ID, &unit.Name, &unit.CategoryID, &unit.Quantity, &unit.Price, &unit.Discount, &unit.Popularity, &feature, &picture)
+		if err != nil {
+			return []Unit{}, err
+		}
+		features = append(features, feature)
+		pictures = append(pictures, picture)
+		units = append(units, unit)
+	}
+	for i := 0; i < len(units); i++ {
+		errU := json.Unmarshal([]byte(features[i]), &units[i].Features)
+		if errU != nil {
+			return []Unit{}, err
+		}
+		errU = json.Unmarshal([]byte(pictures[i]), &units[i].Pictures)
+		if errU != nil {
+			return []Unit{}, err
+		}
+	}
+	return units, nil
+}

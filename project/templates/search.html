@@ -1,0 +1,70 @@
+<head>
+    <title>Поиск по сайту</title>
+    <link rel="stylesheet" type="text/css" href="../../assets/css/common_style.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/show_style.css">
+</head>
+<style type="text/css">
+    .form {
+	width: 500px;
+	height: 300px;
+	background-color: white;
+	margin: 50px auto;
+	text-align: center;
+	border-radius: 3px;
+	border: 1px solid #cccccc;
+}
+.elem {
+    padding-top: 25px;
+    width: auto;
+    height: auto;
+    margin: 0;
+    border: none;
+}
+.elem div {
+	padding-bottom: 3px;
+}
+.fieldC {
+	height: 40px;
+	width: 200px;
+	background: #f2f2f2;
+	outline: 0;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	font-size: 14px;
+	padding-left: 15px;
+}
+.button {
+	margin-top: 35px;
+    margin-bottom: 35px;
+    float: none;
+    margin-right: 0;
+    padding-top: 0;
+}
+.button a {
+	background-color: yellow;
+	width: 100%;
+}
+.buttonB a {
+	width: 200px;
+	border-radius: 3px;
+}
+</style>
+<div class="header">Поиск</div>
+<div class="form">
+    <form action="/search" method="post">
+        <div class="elem">
+            <div>Введите строку</div>
+            <div><input type="text" class="fieldC" required name="search" style="width: 300px;"/></div>
+        </div>
+        <div><input type="submit" class="button" value="Поиск"></div>
+    </form>
+    <div class="buttonB"><a href="/clear_search">Очистить</a></div>
+</div>
+{{range .}}
+<div class="unit">
+	<div><img src="../../{{.Picture}}"></div>
+	<div class="name"><a href="{{.LinkUnit}}">{{.Name}}</a></div>
+	<div class="buttonA"><a href="{{.Link}}">{{.Text}}</a></button></div>
+	<div class="price">{{.Price}} руб.</div>
+</div>
+{{end}}

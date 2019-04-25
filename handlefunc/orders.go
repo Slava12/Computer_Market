@@ -2,6 +2,7 @@ package handlefunc
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Slava12/Computer_Market/database"
@@ -47,7 +48,13 @@ func makeOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	basket, _ := session.Values["basket"].(string)
-	id, err := database.NewOrder("Выполняется", basket, user.ID, 0, time.Now().String())
+	temp := time.Now().String()
+	tempStrings := strings.Split(temp, ".")
+	tempTime := tempStrings[0]
+	tempStrings = strings.Split(tempStrings[1], " ")
+	tempTime += " " + tempStrings[1] + " " + tempStrings[2]
+	date := tempTime
+	id, err := database.NewOrder("Выполняется", basket, user.ID, 0, date)
 	if err != nil {
 		logger.Warn(err, "Не удалось добавить новый заказ!")
 		return
