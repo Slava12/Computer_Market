@@ -34,6 +34,18 @@ func showOrders(w http.ResponseWriter, r *http.Request) {
 }
 
 func showOrder(w http.ResponseWriter, r *http.Request) {
+	/*vars := mux.Vars(r)
+	orderIDstring := vars["id"]
+	orderID, errString := strconv.Atoi(orderIDstring)
+	if errString != nil {
+		logger.Warn(errString, "Не удалось конвертировать строку в число!")
+		return
+	}
+	order, err := database.GetUnit(orderID)
+	if err != nil {
+		logger.Warn(err, "Не удалось получить данные о заказе ", orderID, "!")
+		return
+	}*/
 	message := "Приносим свои извинения, работа над страницей ещё не завершена."
 	errorMessage := errortemplate.Error{Message: message, Link: "/orders"}
 	execute(w, "error.html", errorMessage)
